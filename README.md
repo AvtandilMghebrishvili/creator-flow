@@ -21,6 +21,8 @@ Agent-guided podcast editing for **Codex and Claude Code**: identify the footage
 
 თუ ფოლდერს არ მიუთითებ, აგენტმა **პირველად უნდა გკითხოს, რომელი ეპიზოდის ფოლდერით დაიწყოს**. ჩვეულებრივ ვებჩატში მხოლოდ GitHub-ის ლინკის ჩაგდება შენს დისკზე წვდომას არ აძლევს: საჭიროა ადგილობრივი აგენტი ან მისთვის ხელმისაწვდომ გარემოში გადატანილი ფაილები. Claude-ის ბრაუზერის ჩატი და Claude Code ერთი გარემო არ არის.
 
+**საჭირო პროგრამების დაყენებაც ფლოუს ნაწილია.** აგენტი ამოწმებს კომპიუტერს და აყენებს დანაკლისს: Python-ს, FFmpeg-ს, დამხმარე ბიბლიოთეკებსა და ტრანსკრიპციისთვის საჭირო კომპონენტებს. უკვე გამართულად დაყენებულებს იყენებს. Premiere-ის ავტომატური აწყობის არჩევისას საჭირო MCP-ს/პლაგინსაც აყენებს, აკონფიგურირებს და კავშირს ამოწმებს. Adobe-ში შესვლა, ლიცენზია ან სისტემის ადმინისტრატორის ფანჯარა შესაძლოა შენს მონაწილეობას მოითხოვდეს. Windows-ის ინსტალატორია `Install.ps1`; [დეტალები და სხვა სისტემები](docs/SETUP.md).
+
 ## რას გკითხავს
 
 - რომელი ფაილია სტუმრის კამერა, წამყვანის კამერა და საერთო კადრი, თუ არსებობს; არის თუ არა კამერის რამდენიმე მიმდევრობით ჩაწერილი ნაწილი.
@@ -44,13 +46,12 @@ Agent-guided podcast editing for **Codex and Claude Code**: identify the footage
 
 ## პროექტის გაშვება
 
-საჭიროა Python 3.10+ და FFmpeg/ffprobe. [სრული დაყენების ინსტრუქცია](docs/SETUP.md).
+Windows-ის ინსტალატორი საჭიროების შემთხვევაში ამატებს Python-ს, FFmpeg/ffprobe-ს და პროექტის ბიბლიოთეკებს. [სრული დაყენების ინსტრუქცია](docs/SETUP.md).
 
 ```powershell
 git clone https://github.com/AvtandilMghebrishvili/podcut-flow.git
 cd podcut-flow
-python -m venv .venv
-.\.venv\Scripts\python -m pip install -e .
+.\Install.ps1
 .\.venv\Scripts\podcut doctor
 .\.venv\Scripts\podcut init "D:\Podcasts\Episode-01"
 ```

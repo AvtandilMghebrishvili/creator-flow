@@ -2,7 +2,39 @@
 
 Use a local agent with terminal and file access: Codex desktop/CLI or Claude Code. A GitHub link in a web chat is documentation access, not access to local media. Ask for the exact episode folder first. Keep the repository and episode folders separate.
 
-## Install the tools
+## Let the agent install what is missing
+
+Installing/using this workflow includes setting up its required free local dependencies. The agent should inspect the computer, reuse working installations, install what is missing for the selected delivery, and verify it works. Give a brief progress update, rather than handing the user a list of routine installation chores or asking again for each dependency. Preserve existing environments, MCP settings and working plugins. User participation is needed only for actual blocked steps such as an OS administrator prompt, an Adobe account login or mandatory interactive plugin loading.
+
+After cloning or downloading/extracting this repository, Windows users/agents can run:
+
+```powershell
+.\Install.ps1
+```
+
+It locates a usable 64-bit Python 3.10+ or installs Python 3.12 through WinGet, verifies FFmpeg/ffprobe, installs them if both are missing, creates/reuses `.venv`, and installs Podcut plus the local transcription library. It uses the registered `Python.Python.3.12` and `Gyan.FFmpeg` packages, with exact IDs and no automatic upgrade of working system tools. See Microsoft's [WinGet install options](https://learn.microsoft.com/en-us/windows/package-manager/winget/install). It never changes PowerShell's persistent execution policy. If script execution is restricted, the agent can inspect the script and use the equivalent individual commands below; do not weaken the machine's policy.
+
+On macOS/Linux with a usable Python:
+
+```sh
+python3 scripts/install.py
+```
+
+The helper uses an existing Homebrew, apt-get or dnf installation for missing FFmpeg. If Python or the package manager is absent, the agent installs the prerequisite using the supported OS/vendor method, then resumes. It does not bootstrap an arbitrary package manager or add unreviewed repositories. On systems outside those routes, use the official FFmpeg build and rerun. After any package-manager operation it checks both executables actually run; a partial/broken installation needs diagnosis instead of a duplicate installation.
+
+Options:
+
+| Windows | macOS/Linux | Meaning |
+| --- | --- | --- |
+| `-Check` | `--check` | Inspect only; no installs or file writes |
+| `-WithoutTranscription` | `--without-transcription` | Skip the ASR library only when it is not needed |
+| `-Premiere` | `--premiere` | Also report the required agent-managed Premiere connection step |
+
+`-Premiere`/`--premiere` does **not** install Adobe or certify an MCP connection. For automated Premiere assembly the agent must complete [Premiere setup](PREMIERE.md), including installation of a missing MCP/plugin and a read-only connection test. If that connection is already healthy, reuse it. If the user only wants an XML import package or a render, no Premiere plugin is required. Adobe itself requires the user's licensed installation/account; purchasing a subscription is outside dependency setup.
+
+The bootstrap verifies imports (including native libraries), checks package compatibility after changes, and caches its setup fingerprint in `.venv/` so repeat runs skip a working installation. Model weights are downloaded by the agent when the selected transcription model is first needed. Do not report the complete workflow ready until the model's short sample and any requested Premiere connection have also been verified. Keep a short local setup receipt alongside the episode's status: reused tools, new installs, checked versions, connection results and any blocked interactive step. Do not commit that machine-specific receipt.
+
+## Manual equivalents and prerequisite recovery
 
 Requirements: Python **3.10+**, FFmpeg and ffprobe on PATH, adequate free disk space. Git is convenient for installing/updating the repository. FFmpeg builds must include the codecs needed by the actual media. Obtain FFmpeg from the [official download links](https://ffmpeg.org/download.html); Python from [python.org](https://www.python.org/downloads/).
 
@@ -50,7 +82,7 @@ Inspect/listen to the sample before a full run without `--start`/`--seconds`. Sa
 
 The repository supplies `.agents/skills/podcut-flow/SKILL.md` for [Codex skill discovery](https://learn.chatgpt.com/docs/build-skills) and `.claude/skills/podcut-flow/SKILL.md` for [Claude Code skills](https://code.claude.com/docs/en/skills). Work from the repository or explicitly instruct the agent to read `START_HERE.md`. Keep the whole repository if installing the skill elsewhere: its relative guide links need the companion files. `AGENTS.md` and `CLAUDE.md` route episode work and repository maintenance separately.
 
-For Premiere use the [dedicated guide](PREMIERE.md). MCP is optional; XML import is the simplest path. No Premiere credentials, bridge secrets, API keys or user-specific MCP configuration ship with this repository.
+For Premiere use the [dedicated guide](PREMIERE.md). The agent installs a missing integration when automated native assembly is selected; XML import is the simpler connection-free path. No Premiere credentials, bridge secrets, API keys or user-specific MCP configuration ship with this repository.
 
 ## Long recordings
 

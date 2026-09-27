@@ -13,6 +13,8 @@ Ask only for information I have not already provided.
 
 If the path is missing, the agent asks for it first. Place all episode video and audio in that folder, optionally in subfolders. A browser chat cannot read a local drive from the GitHub link alone.
 
+Dependency installation is included in the workflow. The agent reuses working tools and installs missing Python/FFmpeg/project/transcription requirements, using `Install.ps1` on Windows or `scripts/install.py` where Python is available. For requested Premiere automation it also installs/configures a missing MCP/plugin and verifies the connection. Adobe licensing/login, OS prompts or interactive plugin loading may still require the user. See [setup](SETUP.md) for the exact installer scope.
+
 The agent asks which files are guest/host/wide cameras, which microphones or recorder channels belong to whom, whether colors need work, what language is spoken, and whether to deliver a render or a Premiere project. For one camera and one mix, it asks left/right seating and speaker identities in timestamped samples, and explains that clean independent voice isolation is not guaranteed.
 
 If color is requested, it presents Natural, Warm and Contrast alternatives from actual episode frames, then uses the user's choice. It verifies sync across the recording, preserves separate microphones on separate lanes, and exports both original-clock and edited-clock TXT, SRT, VTT and JSON transcripts. Camera scratch audio is excluded from the final sequence when external recordings are available.

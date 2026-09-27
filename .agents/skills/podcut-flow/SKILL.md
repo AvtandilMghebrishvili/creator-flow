@@ -11,4 +11,6 @@ Ask for the episode's absolute source folder if it was not supplied. Reuse exist
 
 Use [setup](../../../docs/SETUP.md) for local dependencies and [workflow](../../../docs/WORKFLOW.md) for commands and project fields. Produce actual-frame color alternatives and honor the user's selection. Verify sync and drift before editorial decisions. Preserve distinct external microphones on separate lanes; exclude scratch audio from the final timeline.
 
+Own dependency setup: inspect/reuse existing tools, run the repository installer for missing requirements, and install/configure a missing Premiere MCP/plugin when automated native assembly is selected. Verify imports, executables and the app connection. Ask for user participation only at an actual interactive/permission/account step; ordinary dependency installs are part of setting up the requested workflow.
+
 Use [Premiere instructions](../../../docs/PREMIERE.md) for XML import or optional local MCP. XML alone is not a finished native project. Save/reopen/verify `.prproj`; never do a full render in Premiere-only mode. Deliver source and edited-clock transcripts. Describe actual verification and any remaining limitations honestly.

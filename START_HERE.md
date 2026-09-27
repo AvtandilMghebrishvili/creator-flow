@@ -2,11 +2,17 @@
 
 Use this workflow when the user wants an episode edited. When asked to maintain this repository's code, follow AGENTS.md instead of starting episode intake. Talk in the user's language. This is a guided local workflow, not a promise that a link alone controls their computer.
 
+For an installation-only request, complete docs/SETUP.md first; an episode folder is not required to install the tools. Start the source-folder and role questions when editing an episode begins.
+
 ## 1. Establish the episode and access
 
 Ask for the **absolute episode folder path** if absent. Explain that videos and audio should be placed in that folder; subfolders are supported. Never use the current directory, previous episode, or an old example as an implicit source folder. Confirm local filesystem/tool access. A browser-only chat cannot inspect a user's drive: explain how to use local Codex/Claude Code or an accessible execution environment, without pretending access.
 
-Read docs/SETUP.md and run `podcut doctor`. Install missing project dependencies within a virtual environment. Inspect existing `.podcut/project.json` and `WORK_STATUS.md` and resume if present. Otherwise run `podcut init FOLDER`. Inventory errors are meaningful: report unsupported sources, do not silently omit a camera. Work in `.podcut/`; never overwrite or delete originals. Before heavy work check available disk space, run one heavy worker, keep FFmpeg/ASR CPU use modest, and make recoverable checkpoints.
+Read docs/SETUP.md. **Own the installation, not just the instructions:** when the user asks to set up/use this workflow, inspect this computer and install the missing dependencies needed for the chosen route. Explain what you are installing in a short progress update and proceed within that authorization; do not repeatedly ask the user to install ordinary free prerequisites themselves. Use `Install.ps1` on Windows or `python3 scripts/install.py` on macOS/Linux, then `podcut doctor`. The default installer includes the local transcription library. It reuses working tools and installs project packages inside `.venv`. If no Python/package manager is available, install the needed runtime through the OS/vendor's official method first. Follow up on failures; don't report success from an installer exit code alone.
+
+Download the chosen speech model when needed for the first sample, reusing a compatible cached model if available. For requested Premiere automation, inspect the existing connection first; if missing/broken, install and configure the required upstream MCP/UXP plugin and its runtime using docs/PREMIERE.md, preserving other integrations. XML-only import and rendered delivery do not need that plugin. Do not install unrelated plugins, another AI client, GPU tooling or commercial software just because an installer exists. Adobe licensing/login, OS administrator prompts, and mandatory interactive plugin loading may need the user's participation: complete the independent setup first, explain the exact remaining action, and continue afterward. Never buy a license or bypass a permissions prompt.
+
+Inspect existing `.podcut/project.json` and `WORK_STATUS.md` and resume if present. Otherwise run `podcut init FOLDER`. Inventory errors are meaningful: report unsupported sources, do not silently omit a camera. Work in `.podcut/`; never overwrite or delete originals. Before heavy work check available disk space, run one heavy worker, keep FFmpeg/ASR CPU use modest, and make recoverable checkpoints.
 
 ## 2. Ask only what is missing
 
