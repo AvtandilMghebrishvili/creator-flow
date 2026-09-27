@@ -26,6 +26,7 @@ def test_check_is_read_only_when_everything_is_missing(tmp_path, monkeypatch):
     assert not any(installer.ensure_media(check=True).values())
     result = installer.ensure_python_dependencies(check=True, root=tmp_path)
     assert 'faster_whisper' in result['missing_modules']
+    assert 'sherpa_onnx' in result['missing_modules']
     assert not (tmp_path / '.venv').exists()
 
 

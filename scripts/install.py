@@ -92,7 +92,7 @@ def environment_python(root=ROOT):
 
 
 def check_modules(python, transcribe):
-    names = MODULES + (['faster_whisper'] if transcribe else [])
+    names = MODULES + (['faster_whisper', 'sherpa_onnx', 'huggingface_hub'] if transcribe else [])
     if not python.is_file():
         return names
     code = '''import importlib,json,sys
@@ -146,7 +146,8 @@ def main(argv=None):
     packages = ensure_python_dependencies(args.check, not args.without_transcription)
     ready = all(tools.values()) and not packages['missing_modules']
     report = {'local_tools_ready': ready, 'media_tools': tools, 'environment': packages,
-              'speech_model': 'Reuse cached weights; the agent downloads the chosen model before the first ASR sample.'}
+              'speech_model': 'Whisper + Meta libraries installed when transcription is enabled. Reuse cached weights; '
+                              'run a dual ASR sample with --allow-download before claiming models are ready.'}
     if args.premiere:
         report['premiere'] = {'connection_verified': False,
                               'next': 'Agent: follow docs/PREMIERE.md. Reuse a working connection; otherwise install '

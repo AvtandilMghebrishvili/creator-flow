@@ -64,16 +64,16 @@ Run `podcut init "ABSOLUTE_EPISODE_FOLDER"` once. This creates `.podcut/project.
 
 ## Transcription
 
-Install the optional local recognizer only when needed:
+The default installer includes both local recognizers. For manual setup:
 
 ```sh
 python -m pip install -e '.[transcribe]'
 ```
 
-Use the environment's Python, including its full Windows path when not activated. [faster-whisper](https://github.com/SYSTRAN/faster-whisper) runs locally; selecting a model name may require downloading model weights. This is a download, not an upload of the episode. Explain model size/compute needs first. The CLI only permits a new model download with `--allow-download`; otherwise use cached weights or a local model directory. Start with a short language-specific sample and choose a larger model only if quality requires it and resources permit. CPU/int8/two threads is the default; CUDA is optional and requires compatible installed dependencies.
+Use the environment's Python, including its full Windows path when not activated. **Whisper + Meta run locally and sequentially by default.** Meta uses a pinned 365 MB Omnilingual CTC 300M INT8 conversion through sherpa-onnx, including native Windows support. Whisper's download size depends on the chosen model. These are downloads, not uploads of the episode. The CLI only permits new model downloads with `--allow-download`; otherwise both models must be cached. Start with a short language-specific sample and choose a larger Whisper model only when justified. CPU/two threads is the default; `--device cuda` affects Whisper only and needs compatible existing dependencies. See [models, comparison, licensing and recovery](TRANSCRIPTION.md).
 
 ```sh
-podcut transcribe PROJECT --model small --language ka --start 60 --seconds 45 --allow-download
+podcut transcribe PROJECT --model small --language ka --start 60 --seconds 40 --allow-download
 ```
 
 Inspect/listen to the sample before a full run without `--start`/`--seconds`. Save corrected names and uncertain passages; do not describe unchecked ASR as a verified transcript. A missing or unusable model is a disclosed remaining step, not permission to invent text.

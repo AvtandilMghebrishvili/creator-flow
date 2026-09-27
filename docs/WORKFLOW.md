@@ -80,13 +80,13 @@ podcut approve-color "PROJECT" natural
 
 ## Transcription and episode boundaries
 
-Install the optional recognizer as described in SETUP.md. Run and evaluate a short sample, then the full reference-clock transcript:
+Install both recognizers as described in SETUP.md. [Compare Whisper and Meta](TRANSCRIPTION.md) on a short sample, listen to the differences, then generate both full reference-clock drafts:
 
 ```sh
 podcut transcribe "PROJECT" --model small --language ka
 ```
 
-Full runs have `complete: true`; partial samples do not count as full delivery. ASR runs in resumable chunks and records word timings when available. JSON, TXT, SRT and VTT remain labeled as drafts. Correct names and unclear passages by listening. Find the greeting/introduction and farewell in the recording and set `bounds`. When the user supplies more complex cuts, save chronological or deliberately reordered keep intervals as `[[start,end], ...]`; see `examples/keeps.json`.
+The command defaults to both engines; `--engine whisper` is an explicitly selected single-engine fallback. Full runs have `complete: true`; partial samples do not count as full delivery. ASR runs in resumable chunks and records approximate word timings. Both JSON/TXT/SRT/VTT drafts and comparison HTML/JSON are preserved. Disagreement is not accuracy and no automatic winner is chosen; Whisper remains the editable baseline for `retime-transcript`. Correct names and unclear passages by listening. Find the greeting/introduction and farewell in the recording and set `bounds`. When the user supplies more complex cuts, save chronological or deliberately reordered keep intervals as `[[start,end], ...]`; see `examples/keeps.json`.
 
 ## Plan and editorial review
 
@@ -140,6 +140,7 @@ Rendering is gated to `delivery: "render"` or `"both"`. The current encoder prod
 | `edit_plan.json` | Cuts, source/timebase mapping and review status |
 | `audio/`, `audio_stems.json` | Separate aligned microphone stems and loudness checks |
 | `transcripts/`, `transcript_latest.json` | Reference-clock and edited-clock transcript formats |
+| `transcript_comparison_latest.json`, `transcripts/dual_*/comparison.html` | Both ASR drafts, per-window differences and local listening page |
 | `exchange/` | Premiere XML and color handoff |
 | `exports/` | Requested rendered video and encoded validation report |
 

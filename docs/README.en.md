@@ -20,6 +20,12 @@ A reusable local podcast-editing workflow for Codex and Claude Code, with Python
 
 This is an illustrated example, not a product screenshot or real color preview. A wide camera and isolated microphones are optional; the agent adapts to the files you actually have. [Logo assets and generation notes](assets/README.md).
 
+## Two local transcript drafts
+
+Transcription now defaults to **Whisper + Meta Omnilingual ASR**, processing the same audio sequentially. Both timestamped drafts are saved with a local listening page and word differences. No automatic winner or merged text is produced: agreement is not accuracy. The installer includes both libraries; the first sample downloads missing weights only when allowed.
+
+Meta uses the small CTC 300M INT8 model through native sherpa-onnx (about 365 MB), not the 7B/v2 system. This route works on Windows without WSL. There is no local per-minute ASR fee. See [comparison setup, exact models and review limits](TRANSCRIPTION.md).
+
 ## Start an episode
 
 Give a local agent this prompt:

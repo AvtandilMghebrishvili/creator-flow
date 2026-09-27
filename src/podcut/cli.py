@@ -20,7 +20,14 @@ def parser():
     q=sub.add_parser('approve-color');q.add_argument('project');q.add_argument('look',choices=['original','natural','warm','contrast'])
     q=sub.add_parser('plan');q.add_argument('project');q.add_argument('--turns');q.add_argument('--keeps');q.add_argument('--static-camera')
     q=sub.add_parser('approve-plan');q.add_argument('project');q.add_argument('--note',required=True)
-    q=sub.add_parser('transcribe');q.add_argument('project');q.add_argument('--model',default='small');q.add_argument('--language');q.add_argument('--start',type=float,default=0);q.add_argument('--seconds',type=float);q.add_argument('--allow-download',action='store_true');q.add_argument('--device',choices=['cpu','cuda'],default='cpu')
+    for name in ['transcribe','compare-audio']:
+        q=sub.add_parser(name);q.add_argument('project' if name=='transcribe' else 'audio')
+        q.add_argument('--model',default='small',help='Whisper model name or local directory; Meta uses the pinned CTC 300M int8 model.')
+        q.add_argument('--language');q.add_argument('--start',type=float,default=0)
+        q.add_argument('--seconds',type=float,default=None if name=='transcribe' else 40)
+        q.add_argument('--allow-download',action='store_true')
+        q.add_argument('--device',choices=['cpu','cuda'],default='cpu',help='Whisper device; Meta uses CPU with two threads.')
+        if name=='transcribe':q.add_argument('--engine',choices=['both','whisper'],default='both')
     q=sub.add_parser('retime-transcript');q.add_argument('project');q.add_argument('--transcript')
     q=sub.add_parser('premiere-luts');q.add_argument('project');q.add_argument('--native',required=True);q.add_argument('--preset',required=True);q.add_argument('--sequence-id',required=True);q.add_argument('--output',required=True);q.add_argument('--closed',action='store_true')
     return ap
@@ -30,6 +37,8 @@ def execute(a):
         import platform
         return {'version':__version__,'python':sys.version.split()[0],'platform':platform.platform(),'ffmpeg':shutil.which('ffmpeg'),'ffprobe':shutil.which('ffprobe'),
                 'optional_transcription_installed':importlib.util.find_spec('faster_whisper') is not None,
+                'optional_meta_transcription_installed':importlib.util.find_spec('sherpa_onnx') is not None,
+                'transcription_default':'Whisper + Meta comparison; doctor does not certify model weights or accuracy.',
                 'premiere':'Optional; cannot infer installation or native API compatibility from the OS.'}
     if a.command=='init':return str(init(a.folder))
     if a.command in ('questions','status'):
@@ -65,8 +74,14 @@ def execute(a):
         from .export import xml,render
         return str(xml(a.project) if a.command=='xml' else render(a.project))
     if a.command=='transcribe':
+        if a.engine=='both':
+            from .dual_asr import compare_project
+            return str(compare_project(a.project,a.model,a.language,a.start,a.seconds,a.allow_download,a.device))
         from .transcript import transcribe
         return str(transcribe(a.project,a.model,a.language,a.start,a.seconds,a.allow_download,a.device))
+    if a.command=='compare-audio':
+        from .dual_asr import compare_audio
+        return str(compare_audio(a.audio,a.model,a.language,a.start,a.seconds,a.allow_download,a.device))
     if a.command=='retime-transcript':
         from .transcript import retime
         return str(retime(a.project,a.transcript))
