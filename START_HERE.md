@@ -1,0 +1,53 @@
+# Agent entry point: Podcut Flow
+
+Use this workflow when the user wants an episode edited. When asked to maintain this repository's code, follow AGENTS.md instead of starting episode intake. Talk in the user's language. This is a guided local workflow, not a promise that a link alone controls their computer.
+
+## 1. Establish the episode and access
+
+Ask for the **absolute episode folder path** if absent. Explain that videos and audio should be placed in that folder; subfolders are supported. Never use the current directory, previous episode, or an old example as an implicit source folder. Confirm local filesystem/tool access. A browser-only chat cannot inspect a user's drive: explain how to use local Codex/Claude Code or an accessible execution environment, without pretending access.
+
+Read docs/SETUP.md and run `podcut doctor`. Install missing project dependencies within a virtual environment. Inspect existing `.podcut/project.json` and `WORK_STATUS.md` and resume if present. Otherwise run `podcut init FOLDER`. Inventory errors are meaningful: report unsupported sources, do not silently omit a camera. Work in `.podcut/`; never overwrite or delete originals. Before heavy work check available disk space, run one heavy worker, keep FFmpeg/ASR CPU use modest, and make recoverable checkpoints.
+
+## 2. Ask only what is missing
+
+Use `podcut questions PROJECT` as a checklist, not a script to repeat verbatim. Existing user answers and authorizations persist. Group related questions into a short intake:
+
+- Which files show the guest, host(s), and optional wide? A role can have sequential parts. Ask about gaps and file order when unclear. Show filenames and actual stills; do not infer identity from appearance.
+- Which recordings/channels contain each microphone? Are they isolated microphones, a stereo split, a shared mix, or camera scratch audio? Confirm channel numbers and listen to samples. Prefer an uninterrupted external audio recording as the common clock.
+- Who are the speakers; how are names spelled; what language(s) are spoken?
+- Are colors already finished? Keep them or prepare color options? Ask the actual recording profile/gamut if unknown; camera model or a BT.709 tag is insufficient to identify log.
+- What should be kept? Default to the requested greeting/introduction through farewell, preserving the conversation. Clarify ambiguity after listening to candidate boundaries.
+- Deliver a rendered video or an editable Premiere project for user review/render? Ask whether Premiere is installed and its OS/version if relevant. Offer both only when useful; never infer permission to render from permission to assemble in Premiere.
+
+If **one camera + one mixed audio**: explicitly explain that speaker attribution and clean isolation are less reliable. Ask who is on the left/right and let the user identify speakers in two or three actual timestamped samples. Record `layout` and `speaker_examples`. Keep a shared audio lane if that is the available recording; do not label duplicated copies as isolated microphones. Preserve the full frame unless the user requests digital crops and resolution supports them. Never invent missing camera angles.
+
+Record answers in `project.json` and a short `.podcut/brief.md`. Use named roles such as `guest`, `host`, `host2`, `wide`; file IDs remain stable. A split multichannel file can have separate source entries with unique IDs and explicit zero-based channels. Set `mapping_confirmed` only after roles are established. See docs/WORKFLOW.md for the schema.
+
+## 3. Color choice before committing the edit
+
+If color is requested: confirm source profiles, obtain any necessary manufacturer conversion LUT locally, and set per-camera exposure/white-balance corrections. Choose representative face/exposure frames from **each camera**, including later lighting conditions. Run `podcut colors PROJECT`; visually inspect the generated comparisons before showing them.
+
+Show the actual Natural, Warm and Contrast comparisons and ask which to use. These are starting looks; iterate camera matching if needed. Do not present generic generated images as the episode's color samples. Run `approve-color` only after the user's choice. If they already chose a version in this episode, honor it. If they requested original/already-graded footage, record `original` without double grading. Sync/inventory can proceed while awaiting a color answer, but don't commit a final edit/render that assumes an unanswered choice.
+
+## 4. Synchronize and transcribe
+
+Follow docs/WORKFLOW.md. Use scratch audio to propose sync; it is analysis-only unless the user explicitly elects camera audio as the sole available source. Estimate offset **and clock drift**, independently for each camera part/microphone. Inspect matches near the start, middle and end and check lip sync. Low confidence, silent cameras, discontinuities or implausible drift need manual anchors or user help. A successful command is not proof of synchronization. Record verification evidence before `verify-sync`.
+
+Make a short local ASR sample in the specified language, listen and assess quality, then transcribe the full episode. Large model download/compute is a dependency choice to explain; never send private recordings to an external transcription API without authorization. Save source-clock TXT/SRT/VTT/JSON; ASR is a draft, especially names, Georgian and mixed languages. Correct boundaries by listening, not by blindly using ASR timestamps. Do not fabricate transcripts when the model is absent/unusable.
+
+## 5. Edit and preserve independent sound
+
+Locate the opening greeting/introduction and closing farewell. Record precise reference-clock `bounds`; use explicit keep intervals for agreed removals. Preserve speech and natural pauses. Avoid aggressive silence removal, guessed filler deletions or jump cuts within words.
+
+Create a proposed plan. Distinct mic dominance can suggest speaker turns; bleed/overlap means those suggestions need review. With shared audio, review timestamped turns manually or use an explicitly chosen static camera. Apply a calm interview rhythm; the helper's 38-second close / 7-second wide pattern is only a starting point. Review interruptions, reactions, long answers, every file boundary and any camera dropout. Fall back to available wide coverage; never extend a missing camera into black.
+
+Keep each camera role on a separate video lane, external guest/host microphones on separate audio lanes, and no scratch-camera audio in the final timeline. If only one mixed recording exists, keep one honestly named mix lane. Clean gently, align on one clock, and normalize the **combined** mix while preserving independent stems. Avoid gates that cut word tails and processors that introduce uncorrected delay.
+
+Review the plan and validate coverage, source ranges, frame counts, small residual drift and the intended boundaries before approving it. Agent editorial verification does not require another user approval unless the user requested it; color and delivery choices do. Prepare audio and retime the transcript into the edited timeline. Preserve both source and final timestamp versions.
+
+## 6. Deliver the requested format
+
+- **Premiere:** follow docs/PREMIERE.md. Offer XML import as the simpler connection-free path, or help install/configure the upstream local MCP when automation is desired. Import originals, separate stems, and apply each approved camera LUT once. Save a new native `.prproj`, reopen it, and verify media links, sequence, cuts, colors, audio routing, playback and duration. Do not render the complete video. If app access is unavailable, supply the XML/LUT/stem package and exact remaining steps, and call it an exchange package—not a completed Premiere project.
+- **Render:** `podcut render PROJECT` only when selected. Inspect the final encoded file, including start/middle/end audio sync, actual colors and camera transitions. The helper checks duration, decodability, loudness/true peak and sampled audio alignment; it cannot certify editorial taste or lip sync.
+
+Deliver timestamped transcripts, the project/video, and a short plain-language handoff with verified facts, remaining uncertainty and relevant absolute paths. Keep receipts in `.podcut/`. Do not declare full completion when transcripts, color application, native reopening or requested review are still missing. Resuming must validate source/config signatures and reuse only valid completed work. Never put episode media, transcripts, credentials or local MCP configuration into the public repository.

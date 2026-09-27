@@ -1,0 +1,4 @@
+interface:
+  display_name: "Podcut Flow"
+  short_description: "Guide local podcast sync, cuts and delivery"
+  default_prompt: "Use $podcut-flow to edit the podcast in my episode folder."

@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "podcut-flow"
+version = "0.1.0"
+description = "A local, agent-guided podcast editing workflow for Codex and Claude Code"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{name = "TECHcrush / Avtandil Mghebrishvili"}]
+dependencies = ["numpy>=1.24,<3", "scipy>=1.10,<2", "soundfile>=0.12,<1", "Pillow>=10,<13"]
+
+[project.optional-dependencies]
+transcribe = ["faster-whisper>=1.1,<2"]
+dev = ["pytest>=8,<10", "build>=1,<2", "PyYAML>=6,<7"]
+
+[project.scripts]
+podcut = "podcut.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
