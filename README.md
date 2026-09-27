@@ -7,19 +7,21 @@
 
 **შენი AI პოდკასტის ედითორი — ადგილობრივი ფაილებიდან სინქრონიზებულ მონტაჟამდე.**
 
-Agent-guided podcast editing for **Codex and Claude Code**: identify the footage, synchronize cameras and microphones, choose a color look, build an edit, and deliver either an editable Premiere sequence or a rendered video. Includes local Python tools; no paid transcription API is required.
+Agent-guided podcast editing for **Codex and Claude Code**: synchronize cameras and microphones, choose a color look, edit, and deliver a Premiere project or rendered video. **Meta Omnilingual ASR is the default local transcription engine.** No paid transcription API is required.
+
+**ნაგულისხმევი ტრანსკრიპცია: Meta Omnilingual ASR** — ხმა ტექსტად შენს კომპიუტერში გარდაიქმნება. Whisper მხოლოდ სურვილისამებრ ირთვება. [როგორ მუშაობს](docs/TRANSCRIPTION.md).
 
 [English guide](docs/README.en.md) · [აგენტის დასაწყისი / Start here](START_HERE.md) · [დაყენება / Setup](docs/SETUP.md) · [Premiere](docs/PREMIERE.md) · [შეზღუდვები / Limitations](docs/LIMITATIONS.md)
 
 ## ფლოუ ერთი შეხედვით
 
-[![Podcut Flow-ს ექვსი ნაბიჯი: ფაილები, აგენტი, დაყენება, სინქრონი და ფერი, მონტაჟი და ტრანსკრიპტი, საბოლოო ფორმატი](docs/assets/podcut-workflow-guide.png)](docs/assets/podcut-workflow-guide.png)
+[![Podcut Flow-ს ექვსი ნაბიჯი: ფაილები, აგენტი, დაყენება, სინქრონი და ფერი, მონტაჟი და Meta Omnilingual ASR ტრანსკრიპცია, საბოლოო ფორმატი](docs/assets/podcut-workflow-guide.png)](docs/assets/podcut-workflow-guide.png)
 
 1. **ჩაყარე ფაილები** — ერთი ეპიზოდის ვიდეოები და ხმები ერთ ფოლდერში მოათავსე.
 2. **გაუზიარე აგენტს** — Codex-ს ან Claude Code-ს მიეცი ამ რეპოზიტორიის ლინკი და ეპიზოდის ფოლდერის გზა.
 3. **მოამზადე გარემო** — აგენტი აყენებს დანაკლის პროგრამებს და გეკითხება, ვის ეკუთვნის თითოეული კამერა და მიკროფონი.
 4. **შეამოწმე სინქრონი და აირჩიე ფერი** — ხმა და კადრები სინქრონდება; თუ ფერის დამუშავება გინდა, რეალური კადრების ვარიანტებიდან ირჩევ.
-5. **მიიღე მონტაჟი და ტრანსკრიპტი** — დამოუკიდებელი მიკროფონები ცალკე ტრეკებზე რჩება; ტექსტს წყაროსა და მონტაჟის ტაიმკოდები ახლავს.
+5. **მიიღე მონტაჟი და Meta-ს ტრანსკრიპტი** — Meta Omnilingual ASR ნაგულისხმევად ადგილობრივად მუშაობს; დამოუკიდებელი მიკროფონები ცალკე ტრეკებზე რჩება, ტექსტს კი წყაროსა და მონტაჟის ტაიმკოდები ახლავს.
 6. **აირჩიე შედეგი** — Premiere-ში აწყობილი პროექტი შენს გადასამოწმებლად და დასარენდერებლად, ან უკვე დარენდერებული ვიდეო.
 
 სქემა საილუსტრაციო მაგალითია. საერთო კადრი და ცალკე მიკროფონები სავალდებულო არ არის; აგენტი შენს ფაილებს მოერგება. ფერის ნამდვილი ვარიანტები შენი ეპიზოდის კადრებიდან მზადდება. [ლოგოს ფაილები და გრაფიკის აღწერები](docs/assets/README.md).
@@ -33,6 +35,7 @@ Agent-guided podcast editing for **Codex and Claude Code**: identify the footage
 ```text
 გამოიყენე https://github.com/AvtandilMghebrishvili/podcut-flow
 წაიკითხე START_HERE.md და შესაბამისი skill. მინდა პოდკასტის დამუშავება.
+ტრანსკრიპციისთვის გამოიყენე ნაგულისხმევი Meta Omnilingual ASR.
 ჩემი ეპიზოდის ფოლდერია: D:\Podcasts\Episode-01
 თუ რამე ინფორმაცია გაკლია, მკითხე; უკვე მოცემული პასუხები გაითვალისწინე.
 ```

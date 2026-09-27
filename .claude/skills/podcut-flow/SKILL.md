@@ -1,11 +1,13 @@
 ---
 name: podcut-flow
-description: "Guide editing a local podcast episode: ask for its folder and missing camera/microphone roles, verify synchronization, offer real color variants, produce reviewed cuts and timestamped transcripts, then deliver Premiere assembly or a requested render. Includes single-camera mixed-audio clarification. Not for unrelated repository coding tasks."
+description: "Guide editing a local podcast episode with Meta Omnilingual ASR transcription by default: ask for its folder and missing source roles, verify sync, offer real color variants, produce cuts and timestamped transcripts, then deliver Premiere assembly or a requested render. Includes single-camera mixed-audio clarification. Not for unrelated repository coding tasks."
 ---
 
 # Podcut Flow for Claude Code
 
 Read the canonical [START_HERE.md](../../../START_HERE.md) and [shared skill](../../../.agents/skills/podcut-flow/SKILL.md), then follow that workflow. Resolve paths from this repository; if installed separately, first locate the repository checkout.
+
+Use **Meta Omnilingual ASR by default** for transcription and the final-clock text baseline. The normal installer and `podcut transcribe PROJECT` use Meta alone. Whisper and dual comparison are opt-in; see [transcription](../../../docs/TRANSCRIPTION.md). Preserve existing reviewed transcripts when resuming.
 
 Ask for the episode folder if absent, preserve the user's existing answers, and save state in that episode's `.podcut/`. Confirm speaker/camera/microphone mapping, color choice and final delivery. One shared audio recording cannot be relabeled as two isolated microphones. Premiere-only work must not render the complete video. Use [setup](../../../docs/SETUP.md), [workflow](../../../docs/WORKFLOW.md) and [Premiere guidance](../../../docs/PREMIERE.md) as needed.
 

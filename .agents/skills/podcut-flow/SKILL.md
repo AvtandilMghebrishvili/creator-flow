@@ -1,11 +1,13 @@
 ---
 name: podcut-flow
-description: Guide local podcast editing from a user-selected episode folder in Codex or Claude. Use for synchronizing camera footage and external microphones, speaker-led cuts, real color-look choices, timestamped transcripts, and Premiere assembly or requested rendering. Handles missing camera/microphone mapping and single-camera mixed-audio ambiguity. Do not use for unrelated coding or generated presenter videos.
+description: Guide local podcast editing from a user-selected episode folder in Codex or Claude, with Meta Omnilingual ASR transcription by default. Use for camera/microphone synchronization, speaker-led cuts, real color choices, timestamped transcripts, and Premiere assembly or requested rendering. Handles missing source mapping and single-camera mixed-audio ambiguity. Do not use for unrelated coding or generated presenter videos.
 ---
 
 # Podcut Flow
 
 Read [START_HERE.md](../../../START_HERE.md) in this repository and follow it as the canonical workflow. If this skill was copied separately, locate the repository; do not assume these relative resources still exist.
+
+Use **Meta Omnilingual ASR by default** for transcription and as the final-clock text baseline. The normal installer and `podcut transcribe PROJECT` use Meta alone. Whisper and dual comparison are opt-in. See [transcription](../../../docs/TRANSCRIPTION.md) for setup, sampling and timing review; preserve existing reviewed transcripts when resuming.
 
 Ask for the episode's absolute source folder if it was not supplied. Reuse existing answers and saved `.podcut/` state. Ask only missing camera, microphone, color, language, boundaries and delivery questions. For a single wide camera and shared audio, ask left/right identity and timestamped speaker examples; do not claim independent voice isolation.
 

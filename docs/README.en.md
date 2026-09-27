@@ -5,17 +5,17 @@
   <img src="assets/podcut-logo.png" alt="Podcut Flow cut-microphone logo" width="560">
 </picture>
 
-A reusable local podcast-editing workflow for Codex and Claude Code, with Python helpers for synchronization, color previews, edit planning, separate microphone stems, timestamped transcripts, Premiere exchange and optional rendering.
+A reusable local podcast-editing workflow for Codex and Claude Code, with **Meta Omnilingual ASR as the default local transcription engine**, synchronization, color previews, separate microphone stems, timestamped transcripts, Premiere exchange and optional rendering. Whisper is an optional comparison tool.
 
 ## The workflow at a glance
 
-[![Six illustrated steps from episode files to a Premiere project or rendered video](assets/podcut-workflow-guide.png)](assets/podcut-workflow-guide.png)
+[![Six steps from episode files through default Meta Omnilingual ASR transcription to a Premiere project or rendered video](assets/podcut-workflow-guide.png)](assets/podcut-workflow-guide.png)
 
 1. Put one episode's video and audio in one folder.
 2. Give local Codex/Claude Code this repository link and the folder path.
 3. Let the agent install missing tools and confirm each camera/microphone's role.
 4. Verify synchronization and choose a look from your actual footage if grading is wanted.
-5. Review the edit and timestamped transcripts; independent microphones stay on separate tracks.
+5. Review the edit and default Meta Omnilingual ASR transcript; recognition runs locally and independent microphones stay on separate tracks.
 6. Choose a native Premiere project for your review/render, or a rendered video.
 
 This is an illustrated example, not a product screenshot or real color preview. A wide camera and isolated microphones are optional; the agent adapts to the files you actually have. [Logo assets and generation notes](assets/README.md).
@@ -33,6 +33,7 @@ Give a local agent this prompt:
 ```text
 Use https://github.com/AvtandilMghebrishvili/podcut-flow.
 Read START_HERE.md and its podcut-flow skill. Edit my podcast.
+Use the default Meta Omnilingual ASR for transcription.
 Episode folder: /absolute/path/to/episode
 Ask only for information I have not already provided.
 ```
