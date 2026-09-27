@@ -7,7 +7,7 @@ import pytest
 import yaml
 
 from podcut.core import rate, require_mapping, fingerprint, write, read, identity
-from podcut.plan import validate_plan
+from podcut.plan import validate_plan,build
 from podcut.sync import fit
 from podcut.transcript import transcribe
 
@@ -60,6 +60,23 @@ def test_clock_anchors_must_be_finite_and_forward():
         fit([{'reference': 0, 'source': 0}, {'reference': 10, 'source': float('nan')}])
     with pytest.raises(ValueError, match='same direction'):
         fit([{'reference': 0, 'source': 10}, {'reference': 10, 'source': 0}])
+
+
+def test_sequential_files_are_one_angle_without_a_false_gap(tmp_path):
+    entries=[]
+    for ident,kind,duration in [('c1','camera',10),('c2','camera',10),('a','audio',20)]:
+        path=tmp_path/(ident+'.synthetic');path.write_text('fixture',encoding='utf-8')
+        entries.append(dict(id=ident,kind=kind,role='wide' if kind=='camera' else 'mix',use=True,
+                            duration=duration,path=str(path),fingerprint=fingerprint(path),audio_channels=1))
+    p={'schema_version':1,'sources':entries,'reference_id':'a','decisions':{'mapping_confirmed':True},
+       'timeline':{'fps':'25'},'audio':{'tracks':[{'source_id':'a','speaker':'mix'}]},
+       'bounds':[0,20], 'sync':{ident:{'offset':offset,'rate':1,'verified':True} for ident,offset in [('c1',0),('c2',-10),('a',0)]}}
+    project=tmp_path/'project.json';write(project,p)
+    plan=read(build(project))
+    assert plan['total_frames']==500
+    assert [s['camera_id'] for s in plan['shots']]==['c1','c2']
+    assert [s['source_in_frame'] for s in plan['shots']]==[0,0]
+    assert plan['shots'][0]['end_frame']==plan['shots'][1]['start_frame']==250
 
 
 def test_asr_adapter_records_full_vs_sample_and_resumes_without_model_download(tmp_path, monkeypatch):

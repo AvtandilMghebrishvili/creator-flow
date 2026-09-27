@@ -17,7 +17,7 @@ def test_cube_identity(tmp_path):
     assert np.max(abs(apply_cube(x,read_cube(path))-x))<1e-6
 
 def test_intake_single_camera_mixed_audio_is_ambiguous():
-    p={'sources':[{'id':'c','kind':'camera','use':True}], 'decisions':{'mapping_confirmed':True,'language':'en','color_requested':False,'delivery':'premiere'},
+    p={'sources':[{'id':'c','kind':'camera','role':'wide','use':True},{'id':'c2','kind':'camera','role':'wide','use':True}], 'decisions':{'mapping_confirmed':True,'language':'en','color_requested':False,'delivery':'premiere'},
        'reference_id':'a','audio':{'tracks':[{'speaker':'mix'}]},'bounds':[0,10],'layout':{},'speaker_examples':[]}
     assert any('left/right' in q for q in questions(p))
     p['layout']={'confirmed':True};p['speaker_examples']=[{'speaker':'guest','time':2},{'speaker':'host','time':5}]

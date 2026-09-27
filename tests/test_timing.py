@@ -56,7 +56,8 @@ def project_fixture():
 def test_camera_tail_falls_back_to_wide():
     p=project_fixture()
     assert camera_at(p,'guest',10)['id']=='g'
-    assert camera_at(p,'guest',39.97)['id']=='w'
+    assert camera_at(p,'guest',39.97)['id']=='g'
+    assert camera_at(p,'guest',40)['id']=='w'
     assert camera_at(p,'guest',65)['id']=='w'
     with pytest.raises(ValueError):camera_at(p,'guest',90)
 

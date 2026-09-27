@@ -53,7 +53,7 @@ def speaker_turns(p, root, start, end):
 def camera_at(p, role, at, fallback=True):
     cameras = sources(p, "camera")
     fps = float(rate(p["timeline"]["fps"]))
-    available = [s for s in cameras if coverage(s, p["sync"][s["id"]])[0]-.001 <= at < math.floor((coverage(s, p["sync"][s["id"]])[1]-.04)*fps)/fps]
+    available = [s for s in cameras if coverage(s, p["sync"][s["id"]])[0]-.5/fps <= at < math.floor((coverage(s, p["sync"][s["id"]])[1]+1e-7)*fps)/fps]
     for desired in ([role, "wide"] if fallback else [role]):
         selected = next((s for s in available if s["role"] == desired or s["id"] == desired), None)
         if selected:
@@ -83,6 +83,11 @@ def validate_plan(p, plan):
             raise ValueError('Video and audio/content reference clocks disagree.')
         mid = s["reference_start"] + seconds(n, fps)/2
         source_in = frames(m["offset"]+m["rate"]*mid-seconds(n, fps)/2, fps)
+        # Stay within physical media while allowing sub-frame clock rounding at a boundary.
+        max_in = math.floor(cam['duration']*float(fps)+1e-7)-n
+        if max_in < 0:
+            raise ValueError('Shot duration exceeds the entire camera file.')
+        source_in = min(max_in,max(0,source_in))
         if source_in < 0 or seconds(source_in+n, fps) > cam["duration"]+.0001:
             raise ValueError(f"Shot exceeds camera coverage: {s}")
         err = max(abs(seconds(source_in, fps)+(x-s["reference_start"])-m["offset"]-m["rate"]*x) for x in [s["reference_start"], s["reference_end"]])
@@ -127,9 +132,9 @@ def build(project, turns_path=None, static_camera=None, keeps_path=None):
             raise ValueError("Invalid kept interval")
         n = frames(end-start, fps)
         plan["segments"].append({"reference_start": start, "reference_end": end, "start_frame": cursor, "end_frame": cursor+n})
-        single = len(sources(p, "camera")) == 1
+        single = len({c['role'] for c in sources(p,'camera')}) == 1
         if static_camera or single:
-            turns = [{"start": start, "end": end, "speaker": static_camera or sources(p, "camera")[0]["id"]}]
+            turns = [{"start": start, "end": end, "speaker": static_camera or sources(p, "camera")[0]["role"]}]
         else:
             turns = supplied if supplied is not None else speaker_turns(p, root, start, end)
         valid = sorted([dict(t, start=max(start,t["start"]), end=min(end,t["end"])) for t in turns if t["start"] < end and t["end"] > start], key=lambda t:t["start"])
@@ -150,7 +155,7 @@ def build(project, turns_path=None, static_camera=None, keeps_path=None):
                 cam = camera_at(p, desired, at+.001)
                 max_end = coverage(cam, p["sync"][cam["id"]])[1]
                 limit = 7. if wide_next else 38.
-                stop = min(turn_end, at+limit, math.floor((max_end-.04)*float(fps))/float(fps))
+                stop = min(turn_end, at+limit, math.floor((max_end+1e-7)*float(fps))/float(fps))
                 if stop <= at:
                     raise ValueError("Camera tail is too short to use safely; adjust the last shot manually.")
                 s = {"camera_id": cam["id"], "reference_start": at, "reference_end": stop,

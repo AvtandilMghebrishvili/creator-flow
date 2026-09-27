@@ -163,7 +163,8 @@ def questions(p):
         q.append("Are colors already finished? Keep them, or prepare several graded alternatives for you to choose?")
     if not p["decisions"].get("delivery"):
         q.append("Do you want a rendered video, or an editable Premiere project for you to review and render? If Premiere: is it installed, and on which OS/version?")
-    if len([s for s in active if s["kind"] == "camera"]) == 1 and len(p.get("audio", {}).get("tracks", [])) <= 1:
+    camera_roles = {s.get('role') or s['id'] for s in active if s['kind'] == 'camera'}
+    if len(camera_roles) == 1 and len(p.get("audio", {}).get("tracks", [])) <= 1:
         if not p.get("layout", {}).get("confirmed") or len(p.get("speaker_examples", [])) < 2:
             q.append("One camera plus one mixed audio track is ambiguous. Who sits on the left/right? Identify who speaks in two or three timestamped samples. Automatic speaker isolation is not reliable; keep the full frame unless a crop is requested and resolution permits it.")
     if not p.get("bounds"):
