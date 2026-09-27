@@ -6,11 +6,23 @@ import re
 root = Path(__file__).resolve().parents[1]
 result = subprocess.run(['git', 'ls-files', '-z'], cwd=root, check=True, capture_output=True)
 problems = []
+# These reviewed generated graphics are public documentation, not episode media.
+documentation_artwork = {
+    'docs/assets/podcut-logo.png',
+    'docs/assets/podcut-logo-dark.png',
+    'docs/assets/podcut-workflow-guide.png',
+}
 for name in result.stdout.decode('utf-8').split('\0'):
     if not name:
         continue
     path = root / name
     if not path.is_file():
+        continue
+    if name in documentation_artwork:
+        with path.open('rb') as image:
+            signature = image.read(8)
+        if signature != b'\x89PNG\r\n\x1a\n' or path.stat().st_size > 4_000_000:
+            problems.append((name, 'invalid or oversized documentation PNG'))
         continue
     if path.suffix.lower() in {'.mp4','.mov','.mxf','.wav','.mp3','.flac','.m4a','.braw','.r3d','.prproj','.cube','.zip'} or path.stat().st_size > 1_000_000:
         problems.append((name, 'media, native artifact, or large file'))

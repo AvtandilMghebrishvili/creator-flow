@@ -1,6 +1,26 @@
 # Podcut Flow
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/podcut-logo-dark.png">
+  <img src="assets/podcut-logo.png" alt="Podcut Flow cut-microphone logo" width="560">
+</picture>
+
 A reusable local podcast-editing workflow for Codex and Claude Code, with Python helpers for synchronization, color previews, edit planning, separate microphone stems, timestamped transcripts, Premiere exchange and optional rendering.
+
+## The workflow at a glance
+
+[![Six illustrated steps from episode files to a Premiere project or rendered video](assets/podcut-workflow-guide.png)](assets/podcut-workflow-guide.png)
+
+1. Put one episode's video and audio in one folder.
+2. Give local Codex/Claude Code this repository link and the folder path.
+3. Let the agent install missing tools and confirm each camera/microphone's role.
+4. Verify synchronization and choose a look from your actual footage if grading is wanted.
+5. Review the edit and timestamped transcripts; independent microphones stay on separate tracks.
+6. Choose a native Premiere project for your review/render, or a rendered video.
+
+This is an illustrated example, not a product screenshot or real color preview. A wide camera and isolated microphones are optional; the agent adapts to the files you actually have. [Logo assets and generation notes](assets/README.md).
+
+## Start an episode
 
 Give a local agent this prompt:
 
