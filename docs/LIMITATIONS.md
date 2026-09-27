@@ -7,7 +7,7 @@
 | Camera planning | Mic-energy suggestions, reviewed turns, explicit static camera, coverage fallback | Not semantic diarization; speaker identity and editorial rhythm must be reviewed |
 | Audio | Distinct final-clock mono stems, mild cleanup, shared normalization/limiting, measured combined mix | No guaranteed voice isolation, advanced denoising or perfect bleed suppression |
 | Color | Real frame comparisons, per-camera 3D LUTs, three starting looks | Correct input profile/LUT, white balance, exposure and camera matching need inspection |
-| Transcript | Local Whisper + Meta CTC 300M comparison by default; independent drafts, four formats, source/edit clocks, resumable receipts and listening report | No automatic winner/merged truth; Meta's token-based word boundaries are approximate; small CTC is not 7B/v2; language quality needs actual listening |
+| Transcript | Meta CTC 300M by default; four formats, source/edit clocks and resumable receipts; optional Whisper comparison and listening report | Meta's token-based word boundaries are approximate; small CTC is not 7B/v2; language quality needs listening; comparison does not automatically merge text |
 | Premiere | Original-media FCP7 XML, LUT handoff, installation guide | Native `.prproj` creation and app save/reopen review require installed Premiere access |
 | Render | Sequential H.264/AAC export, frame/decode/loudness checks, sampled audio alignment | Full editorial/visual review; different delivery codecs need an explicit implementation change |
 

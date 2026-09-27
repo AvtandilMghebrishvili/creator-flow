@@ -25,7 +25,7 @@ def test_check_is_read_only_when_everything_is_missing(tmp_path, monkeypatch):
     (tmp_path / 'pyproject.toml').write_text('[project]', encoding='utf-8')
     assert not any(installer.ensure_media(check=True).values())
     result = installer.ensure_python_dependencies(check=True, root=tmp_path)
-    assert 'faster_whisper' in result['missing_modules']
+    assert 'faster_whisper' not in result['missing_modules']
     assert 'sherpa_onnx' in result['missing_modules']
     assert not (tmp_path / '.venv').exists()
 
@@ -74,15 +74,27 @@ def test_repeated_setup_skips_working_environment(tmp_path, monkeypatch):
     marker = tmp_path / '.venv' / 'podcut-install.json'
     marker.write_text(json.dumps({'project_hash': hashlib.sha256(definition.read_bytes()).hexdigest(),
                                   'transcription': True}), encoding='utf-8')
-    monkeypatch.setattr(installer, 'check_modules', lambda python, transcribe: [])
+    monkeypatch.setattr(installer, 'check_modules', lambda python, transcribe, with_whisper=False: [])
     monkeypatch.setattr(installer, 'run', reject_run)
     assert installer.ensure_python_dependencies(root=tmp_path)['installer_configuration_current']
 
 
 def test_premiere_flag_does_not_claim_an_app_connection(tmp_path, monkeypatch, capsys):
     monkeypatch.setattr(installer, 'ensure_media', lambda check: {'ffmpeg': '/ffmpeg', 'ffprobe': '/ffprobe'})
-    monkeypatch.setattr(installer, 'ensure_python_dependencies', lambda *args: {'missing_modules': []})
+    monkeypatch.setattr(installer, 'ensure_python_dependencies', lambda *args, **kwargs: {'missing_modules': []})
     assert installer.main(['--check', '--premiere']) == 0
     result = json.loads(capsys.readouterr().out)
     assert result['local_tools_ready']
     assert result['premiere']['connection_verified'] is False
+
+
+def test_whisper_is_only_required_when_requested(tmp_path):
+    python = tmp_path / 'missing-python'
+    assert 'faster_whisper' not in installer.check_modules(python, True)
+    assert 'faster_whisper' in installer.check_modules(python, True, with_whisper=True)
+
+
+def test_conflicting_transcription_install_options_fail_before_install(monkeypatch):
+    monkeypatch.setattr(installer, 'ensure_media', lambda *a: pytest.fail('Should reject before installation'))
+    with pytest.raises(SystemExit):
+        installer.main(['--without-transcription', '--with-whisper'])

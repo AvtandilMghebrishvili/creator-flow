@@ -27,7 +27,7 @@ def parser():
         q.add_argument('--seconds',type=float,default=None if name=='transcribe' else 40)
         q.add_argument('--allow-download',action='store_true')
         q.add_argument('--device',choices=['cpu','cuda'],default='cpu',help='Whisper device; Meta uses CPU with two threads.')
-        if name=='transcribe':q.add_argument('--engine',choices=['both','whisper'],default='both')
+        if name=='transcribe':q.add_argument('--engine',choices=['meta','both','whisper'],default='meta')
     q=sub.add_parser('retime-transcript');q.add_argument('project');q.add_argument('--transcript')
     q=sub.add_parser('premiere-luts');q.add_argument('project');q.add_argument('--native',required=True);q.add_argument('--preset',required=True);q.add_argument('--sequence-id',required=True);q.add_argument('--output',required=True);q.add_argument('--closed',action='store_true')
     return ap
@@ -36,9 +36,10 @@ def execute(a):
     if a.command=='doctor':
         import platform
         return {'version':__version__,'python':sys.version.split()[0],'platform':platform.platform(),'ffmpeg':shutil.which('ffmpeg'),'ffprobe':shutil.which('ffprobe'),
-                'optional_transcription_installed':importlib.util.find_spec('faster_whisper') is not None,
+                'optional_transcription_installed':importlib.util.find_spec('sherpa_onnx') is not None,
+                'optional_whisper_installed':importlib.util.find_spec('faster_whisper') is not None,
                 'optional_meta_transcription_installed':importlib.util.find_spec('sherpa_onnx') is not None,
-                'transcription_default':'Whisper + Meta comparison; doctor does not certify model weights or accuracy.',
+                'transcription_default':'Meta Omnilingual ASR; Whisper comparison is opt-in. Doctor does not certify weights or accuracy.',
                 'premiere':'Optional; cannot infer installation or native API compatibility from the OS.'}
     if a.command=='init':return str(init(a.folder))
     if a.command in ('questions','status'):
@@ -74,9 +75,9 @@ def execute(a):
         from .export import xml,render
         return str(xml(a.project) if a.command=='xml' else render(a.project))
     if a.command=='transcribe':
-        if a.engine=='both':
-            from .dual_asr import compare_project
-            return str(compare_project(a.project,a.model,a.language,a.start,a.seconds,a.allow_download,a.device))
+        if a.engine in ('meta','both'):
+            from .dual_asr import transcribe_project
+            return str(transcribe_project(a.project,a.model,a.language,a.start,a.seconds,a.allow_download,a.device,a.engine))
         from .transcript import transcribe
         return str(transcribe(a.project,a.model,a.language,a.start,a.seconds,a.allow_download,a.device))
     if a.command=='compare-audio':

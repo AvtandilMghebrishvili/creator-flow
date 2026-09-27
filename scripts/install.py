@@ -91,8 +91,10 @@ def environment_python(root=ROOT):
     return root / '.venv' / ('Scripts/python.exe' if os.name == 'nt' else 'bin/python')
 
 
-def check_modules(python, transcribe):
-    names = MODULES + (['faster_whisper', 'sherpa_onnx', 'huggingface_hub'] if transcribe else [])
+def check_modules(python, transcribe, with_whisper=False):
+    names = MODULES + (['sherpa_onnx', 'huggingface_hub'] if transcribe else [])
+    if with_whisper:
+        names.append('faster_whisper')
     if not python.is_file():
         return names
     code = '''import importlib,json,sys
@@ -110,27 +112,30 @@ print(json.dumps(missing))
     return json.loads(result.stdout.strip().splitlines()[-1])
 
 
-def ensure_python_dependencies(check=False, transcribe=True, root=ROOT):
+def ensure_python_dependencies(check=False, transcribe=True, root=ROOT, with_whisper=False):
     python = environment_python(root)
-    missing = check_modules(python, transcribe)
+    missing = check_modules(python, transcribe, with_whisper)
     marker = root / '.venv' / 'podcut-install.json'
     signature = hashlib.sha256((root / 'pyproject.toml').read_bytes()).hexdigest()
     saved = json.loads(marker.read_text(encoding='utf-8')) if marker.exists() else {}
     configured = saved.get('project_hash') == signature and (not transcribe or saved.get('transcription'))
+    configured = configured and (not with_whisper or saved.get('whisper'))
     if check:
         return {'python': str(python), 'missing_modules': missing, 'installer_configuration_current': bool(configured)}
     if not python.is_file():
         run([sys.executable, '-m', 'venv', root / '.venv'])
     if missing or not configured:
         # No --upgrade/--force-reinstall: pip reuses satisfying installed dependencies.
-        target = str(root) + ('[transcribe]' if transcribe else '')
+        extras = (['transcribe'] if transcribe else []) + (['whisper'] if with_whisper else [])
+        target = str(root) + ('[' + ','.join(extras) + ']' if extras else '')
         run([python, '-m', 'pip', 'install', '-e', target])
         run([python, '-m', 'pip', 'check'])
-        missing = check_modules(python, transcribe)
+        missing = check_modules(python, transcribe, with_whisper)
         if missing:
             raise RuntimeError('Installed modules still cannot load: ' + ', '.join(missing))
         marker.write_text(json.dumps({'project_hash': signature,
-                                     'transcription': transcribe or bool(saved.get('transcription'))}), encoding='utf-8')
+                                     'transcription': transcribe or bool(saved.get('transcription')),
+                                     'whisper': with_whisper or bool(saved.get('whisper'))}), encoding='utf-8')
     return {'python': str(python), 'missing_modules': [], 'installer_configuration_current': True}
 
 
@@ -138,16 +143,19 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description='Install missing Podcut dependencies in .venv; reuse working tools.')
     parser.add_argument('--check', action='store_true', help='Read-only check; do not install or write files.')
     parser.add_argument('--without-transcription', action='store_true', help='Omit the local ASR library when not needed.')
+    parser.add_argument('--with-whisper', action='store_true', help='Also install optional Whisper comparison support.')
     parser.add_argument('--premiere', action='store_true', help='Also report the required agent-managed Premiere/MCP step.')
     args = parser.parse_args(argv)
+    if args.without_transcription and args.with_whisper:
+        parser.error('--with-whisper cannot be combined with --without-transcription')
     if sys.version_info < (3, 10) or sys.maxsize <= 2**32:
         raise RuntimeError('Use 64-bit Python 3.10+; Windows users can run Install.ps1 to locate/install it.')
     tools = ensure_media(args.check)
-    packages = ensure_python_dependencies(args.check, not args.without_transcription)
+    packages = ensure_python_dependencies(args.check, not args.without_transcription, with_whisper=args.with_whisper)
     ready = all(tools.values()) and not packages['missing_modules']
     report = {'local_tools_ready': ready, 'media_tools': tools, 'environment': packages,
-              'speech_model': 'Whisper + Meta libraries installed when transcription is enabled. Reuse cached weights; '
-                              'run a dual ASR sample with --allow-download before claiming models are ready.'}
+              'speech_model': 'Meta is the default transcription engine; Whisper is optional via --with-whisper. '
+                              'Reuse cached weights; run a Meta sample with --allow-download before claiming the model is ready.'}
     if args.premiere:
         report['premiere'] = {'connection_verified': False,
                               'next': 'Agent: follow docs/PREMIERE.md. Reuse a working connection; otherwise install '

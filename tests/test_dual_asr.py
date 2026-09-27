@@ -169,12 +169,13 @@ def test_project_provenance_changes_when_audio_mapping_or_model_changes(setup, t
     models['meta']['name'] += '-revision2'
     third = dual.compare_project(project)
     assert third != second
-    assert Path(read(tmp_path / 'transcript_latest.json')['path']).parent.name == 'whisper'
+    assert Path(read(tmp_path / 'transcript_latest.json')['path']).parent.name == 'meta'
     assert not (tmp_path / 'worker.lock').exists()
 
 
-def test_default_cli_runs_both_with_explicit_whisper_escape_hatch():
-    assert parser().parse_args(['transcribe', 'episode.json']).engine == 'both'
+def test_default_cli_runs_meta_with_opt_in_comparison_and_whisper():
+    assert parser().parse_args(['transcribe', 'episode.json']).engine == 'meta'
+    assert parser().parse_args(['transcribe', 'episode.json', '--engine', 'both']).engine == 'both'
     assert parser().parse_args(['transcribe', 'episode.json', '--engine', 'whisper']).engine == 'whisper'
     assert parser().parse_args(['compare-audio', 'audio.wav', '--language', 'ka']).seconds == 40
 
@@ -200,3 +201,62 @@ def test_pinned_meta_assets_reject_corruption_and_do_not_download_without_flag(t
         asr_models.resolve_models(str(model))
     assert calls[0]['local_files_only'] is True
     assert calls[0]['revision'] == asr_models.OMNI_REVISION
+
+
+def test_meta_resolver_never_imports_whisper_or_downloads_its_weights(tmp_path, monkeypatch):
+    import builtins
+    from podcut import asr_models
+    asset = tmp_path / 'synthetic.asset'
+    asset.write_bytes(b'meta fixture')
+    original_import = builtins.__import__
+
+    def guarded_import(name, *args, **kwargs):
+        if name.startswith(('faster_whisper', 'ctranslate2')):
+            pytest.fail('Meta must work without Whisper installed')
+        return original_import(name, *args, **kwargs)
+
+    def fetch(repo, name, **kwargs):
+        assert repo == asr_models.OMNI_REPO
+        assert kwargs['local_files_only'] is True
+        return str(asset)
+
+    monkeypatch.setattr(builtins, '__import__', guarded_import)
+    monkeypatch.setitem(sys.modules, 'sherpa_onnx', SimpleNamespace(
+        OfflineRecognizer=SimpleNamespace(from_omnilingual_asr_ctc=True)))
+    monkeypatch.setitem(sys.modules, 'huggingface_hub', SimpleNamespace(hf_hub_download=fetch))
+    monkeypatch.setattr(asr_models, 'OMNI_HASHES', {n: asr_models.sha256(asset) for n in asr_models.OMNI_HASHES})
+    monkeypatch.setattr(asr_models, 'version', lambda n: 'synthetic' if n == 'sherpa-onnx' else pytest.fail(n))
+    assert asr_models.resolve_meta_model()['runtime'] == 'sherpa-onnx'
+
+
+def test_default_meta_project_full_sample_resume_and_failed_run_preserve_pointer(setup, tmp_path, monkeypatch):
+    from podcut.cli import execute
+    audio, models, loads, calls = setup
+    project = tmp_path / 'project.json'
+    p = {'schema_version': 1, 'sources': [{'id': 'a', 'path': str(audio), 'fingerprint': fingerprint(audio),
+                                         'kind': 'audio', 'use': True, 'duration': 45}],
+         'reference_id': 'a', 'sync': {'a': {'offset': 0, 'rate': 1, 'verified': True}},
+         'audio': {'tracks': [{'source_id': 'a'}]}, 'decisions': {'language': 'ka'}}
+    write(project, p)
+    monkeypatch.setattr(dual, 'resolve_meta_model', lambda *a: models['meta'])
+    monkeypatch.setattr(dual, 'resolve_models', lambda *a: pytest.fail('Whisper must not be resolved'))
+    monkeypatch.setattr(dual, 'asr_audio', lambda *a: audio)
+    # Exercise the actual default CLI route, not only the helper.
+    path = Path(execute(parser().parse_args(['transcribe', str(project)])))
+    assert path.parent.name == 'meta'
+    assert loads == ['meta'] and len(calls) == 3
+    assert not list(tmp_path.glob('transcripts/*/whisper'))
+    assert not (tmp_path / 'transcript_comparison_latest.json').exists()
+    pointer = read(tmp_path / 'transcript_latest.json')
+    assert pointer['path'] == str(path) and pointer['engine'] == 'meta'
+    assert pointer['complete'] and pointer['comparison'] is None
+    dual.transcribe_project(project)
+    assert loads == ['meta'] and len(calls) == 3
+    sample = dual.transcribe_project(project, start=5, duration=5)
+    assert not read(sample)['complete']
+    previous = read(tmp_path / 'transcript_latest.json')
+    monkeypatch.setattr(dual, 'decode', lambda *a: (_ for _ in ()).throw(RuntimeError('test failure')))
+    with pytest.raises(RuntimeError, match='test failure'):
+        dual.transcribe_project(project, start=25, duration=5)
+    assert read(tmp_path / 'transcript_latest.json') == previous
+    assert not (tmp_path / 'worker.lock').exists()

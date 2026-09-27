@@ -22,20 +22,16 @@ def sha256(path):
     return result.hexdigest()
 
 
-def resolve_models(whisper_model, allow_download=False, device='cpu'):
+def resolve_meta_model(allow_download=False):
     try:
         import sherpa_onnx
-        from faster_whisper.utils import download_model
         from huggingface_hub import hf_hub_download
     except ImportError as exc:
-        raise ValueError('Dual ASR needs the transcription dependencies. Run the installer or '
+        raise ValueError('Meta ASR needs the transcription dependencies. Run the installer or '
                          'python -m pip install -e ".[transcribe]".') from exc
     if not hasattr(sherpa_onnx.OfflineRecognizer, 'from_omnilingual_asr_ctc'):
         raise ValueError('This sherpa-onnx build lacks Omnilingual ASR. Re-run the installer.')
-    model_path = Path(whisper_model).expanduser()
     try:
-        if not model_path.is_dir():
-            model_path = Path(download_model(whisper_model, local_files_only=not allow_download))
         assets = {}
         for name, expected in OMNI_HASHES.items():
             path = Path(hf_hub_download(OMNI_REPO, name, revision=OMNI_REVISION,
@@ -46,20 +42,35 @@ def resolve_models(whisper_model, allow_download=False, device='cpu'):
     except (OSError, RuntimeError) as exc:
         raise ValueError('ASR weights unavailable. Use --allow-download for the first setup, '
                          'or restore the cached models. ' + str(exc)) from exc
-    files = sorted(p for p in model_path.iterdir() if p.is_file())
+    return {'name': 'omniASR_CTC_300M (int8 ONNX, original November 2025 weights)',
+            'runtime': 'sherpa-onnx', 'runtime_version': version('sherpa-onnx'),
+            'repository': OMNI_REPO, 'revision': OMNI_REVISION,
+            'sha256': OMNI_HASHES, 'assets': assets, 'device': 'cpu',
+            'language_conditioning': False, 'license': 'Apache-2.0',
+            'timing': 'CTC token emission times; approximate word boundaries'}
+
+
+def resolve_models(whisper_model, allow_download=False, device='cpu'):
+    """Explicit comparison setup; the default Meta path never imports Whisper."""
+    meta = resolve_meta_model(allow_download)
+    try:
+        from faster_whisper.utils import download_model
+    except ImportError as exc:
+        raise ValueError('Whisper comparison is optional. Install it with '
+                         'python -m pip install -e ".[transcribe,whisper]" or use Meta only.') from exc
+    model_path = Path(whisper_model).expanduser()
+    try:
+        if not model_path.is_dir():
+            model_path = Path(download_model(whisper_model, local_files_only=not allow_download))
+    except (OSError, RuntimeError) as exc:
+        raise ValueError('Whisper weights unavailable. Use --allow-download or a cached model. ' + str(exc)) from exc
     if not (model_path / 'model.bin').is_file():
         raise ValueError('Whisper model directory is incomplete: model.bin is missing.')
-    return {
-        'whisper': {'name': str(whisper_model), 'runtime': 'faster-whisper',
-                    'runtime_version': version('faster-whisper'),
-                    'ctranslate2_version': version('ctranslate2'),
-                    'path': str(model_path.resolve()), 'files': [fingerprint(p) for p in files],
-                    'device': device, 'compute_type': 'int8' if device == 'cpu' else 'float16',
-                    'timing': 'estimated word boundaries'},
-        'meta': {'name': 'omniASR_CTC_300M (int8 ONNX, original November 2025 weights)',
-                 'runtime': 'sherpa-onnx', 'runtime_version': version('sherpa-onnx'),
-                 'repository': OMNI_REPO, 'revision': OMNI_REVISION,
-                 'sha256': OMNI_HASHES, 'assets': assets, 'device': 'cpu',
-                 'language_conditioning': False, 'license': 'Apache-2.0',
-                 'timing': 'CTC token emission times; approximate word boundaries'},
-    }
+    files = sorted(p for p in model_path.iterdir() if p.is_file())
+    return {'whisper': {'name': str(whisper_model), 'runtime': 'faster-whisper',
+                       'runtime_version': version('faster-whisper'),
+                       'ctranslate2_version': version('ctranslate2'),
+                       'path': str(model_path.resolve()), 'files': [fingerprint(p) for p in files],
+                       'device': device, 'compute_type': 'int8' if device == 'cpu' else 'float16',
+                       'timing': 'estimated word boundaries'},
+            'meta': meta}

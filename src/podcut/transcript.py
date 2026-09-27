@@ -63,7 +63,7 @@ def transcribe(project, model='small', language=None, start=0., duration=None, a
     try:
         from faster_whisper import WhisperModel
     except ImportError:
-        raise ValueError('Install the optional transcription dependency: python -m pip install -e ".[transcribe]"')
+        raise ValueError('Install the optional Whisper dependency: python -m pip install -e ".[whisper]"')
     p,root=load(project)
     language=language or p['decisions'].get('language')
     if not language:raise ValueError('Specify the spoken language; test a representative sample before a long transcription.')

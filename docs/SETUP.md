@@ -28,6 +28,7 @@ Options:
 | --- | --- | --- |
 | `-Check` | `--check` | Inspect only; no installs or file writes |
 | `-WithoutTranscription` | `--without-transcription` | Skip the ASR library only when it is not needed |
+| `-WithWhisper` | `--with-whisper` | Also install optional Whisper support for comparison or explicit Whisper-only use |
 | `-Premiere` | `--premiere` | Also report the required agent-managed Premiere connection step |
 
 `-Premiere`/`--premiere` does **not** install Adobe or certify an MCP connection. For automated Premiere assembly the agent must complete [Premiere setup](PREMIERE.md), including installation of a missing MCP/plugin and a read-only connection test. If that connection is already healthy, reuse it. If the user only wants an XML import package or a render, no Premiere plugin is required. Adobe itself requires the user's licensed installation/account; purchasing a subscription is outside dependency setup.
@@ -64,16 +65,16 @@ Run `podcut init "ABSOLUTE_EPISODE_FOLDER"` once. This creates `.podcut/project.
 
 ## Transcription
 
-The default installer includes both local recognizers. For manual setup:
+The default installer includes Meta only. For manual setup:
 
 ```sh
 python -m pip install -e '.[transcribe]'
 ```
 
-Use the environment's Python, including its full Windows path when not activated. **Whisper + Meta run locally and sequentially by default.** Meta uses a pinned 365 MB Omnilingual CTC 300M INT8 conversion through sherpa-onnx, including native Windows support. Whisper's download size depends on the chosen model. These are downloads, not uploads of the episode. The CLI only permits new model downloads with `--allow-download`; otherwise both models must be cached. Start with a short language-specific sample and choose a larger Whisper model only when justified. CPU/two threads is the default; `--device cuda` affects Whisper only and needs compatible existing dependencies. See [models, comparison, licensing and recovery](TRANSCRIPTION.md).
+Use the environment's Python, including its full Windows path when not activated. **Meta Omnilingual runs locally by default**, using a pinned 365 MB CTC 300M INT8 conversion through sherpa-onnx, including native Windows support. The CLI permits a missing model download with `--allow-download`; otherwise use cached weights. This downloads weights and never uploads the episode. Meta uses CPU/two threads. Whisper is optional: add `-WithWhisper` / `--with-whisper`, or install `.[transcribe,whisper]`, and choose `--engine both` for sequential comparison. Existing Whisper installations are preserved but are not used by default. See [models, comparison, licensing and recovery](TRANSCRIPTION.md).
 
 ```sh
-podcut transcribe PROJECT --model small --language ka --start 60 --seconds 40 --allow-download
+podcut transcribe PROJECT --language ka --start 60 --seconds 40 --allow-download
 ```
 
 Inspect/listen to the sample before a full run without `--start`/`--seconds`. Save corrected names and uncertain passages; do not describe unchecked ASR as a verified transcript. A missing or unusable model is a disclosed remaining step, not permission to invent text.

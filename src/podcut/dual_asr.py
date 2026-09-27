@@ -1,4 +1,4 @@
-"""Sequential two-engine transcription with recoverable, reference-clock comparisons.
+"""Meta transcription and optional sequential two-engine comparison on one clock.
 
 Agreement is not ground truth. Neither engine overwrites the other's text or timings.
 """
@@ -14,7 +14,7 @@ import unicodedata
 import numpy as np
 import soundfile as sf
 
-from .asr_models import resolve_models
+from .asr_models import resolve_meta_model, resolve_models
 from .core import digest, ffmpeg, fingerprint, load, probe, read, state, worker, write
 from .transcript import asr_audio, asr_signature, save_formats, stamp
 
@@ -141,6 +141,8 @@ def make_segment(words, lo, st, en):
 
 def run_engines(audio, audio_origin, start, end, output, models, language, audio_signature,
                 full_duration, clock):
+    if set(models) not in ({'meta'}, {'meta', 'whisper'}):
+        raise ValueError('Choose Meta transcription or explicit Whisper + Meta comparison.')
     ranges = windows(start, end)
     write(output / 'run_status.json', {'status': 'running', 'range': [start, end]})
     transcripts = {}
@@ -193,11 +195,14 @@ def run_engines(audio, audio_origin, start, end, output, models, language, audio
             finally:
                 del engine
                 gc.collect()  # Free one model before loading the other, including GPU allocations.
-        comparison = build_comparison(output, transcripts, ranges)
-        write(output / 'comparison.json', comparison)
-        write_html(output / 'comparison.html', comparison, audio, audio_origin)
+        result = output / 'meta' / 'reference.json'
+        if len(models) == 2:
+            comparison = build_comparison(output, transcripts, ranges)
+            write(output / 'comparison.json', comparison)
+            write_html(output / 'comparison.html', comparison, audio, audio_origin)
+            result = output / 'comparison.json'
         write(output / 'run_status.json', {'status': 'completed', 'range': [start, end]})
-        return output / 'comparison.json'
+        return result
     except Exception as exc:
         write(output / 'run_status.json', {'status': 'failed', 'error': str(exc), 'range': [start, end]})
         raise
@@ -279,33 +284,46 @@ def interval(start, duration, full):
     return end
 
 
-def compare_project(project, model='small', language=None, start=0., duration=None,
-                    allow_download=False, device='cpu'):
+def transcribe_project(project, model='small', language=None, start=0., duration=None,
+                       allow_download=False, device='cpu', engine='meta'):
+    start = float(start)
+    if engine not in ('meta', 'both'):
+        raise ValueError('Choose meta or both; the Whisper-only adapter is separate.')
     p, root = load(project)
     language = language or p['decisions'].get('language')
     if not language:
         raise ValueError('Specify the spoken language before transcription.')
     with worker(root):
-        models = resolve_models(model, allow_download, device)
+        models = ({'meta': resolve_meta_model(allow_download)} if engine == 'meta'
+                  else resolve_models(model, allow_download, device))
         audio = asr_audio(p, root)
         full = sf.info(audio).duration
         end = interval(start, duration, full)
         signature = digest([asr_signature(p), models, language, start, end, ALGORITHM])
-        output = root / 'transcripts' / ('dual_' + signature[:12])
+        output = root / 'transcripts' / (('meta_' if engine == 'meta' else 'dual_') + signature[:12])
         report = run_engines(audio, 0, start, end, output, models, language, asr_signature(p),
                              full, 'reference recording seconds')
-        write(root / 'transcript_comparison_latest.json', {'path': str(report), 'signature': signature})
-        # Preserve the existing retiming path. Meta remains independent, never silently merged.
-        write(root / 'transcript_latest.json', {'path': str(output / 'whisper' / 'reference.json'),
-                                              'complete': read(report)['complete'], 'signature': signature})
-        state(root, 'transcript_review', 'Whisper + Meta drafts and comparison saved. Review differences by listening; '
-              'Whisper is the editable baseline, not an automatically selected winner.')
+        if engine == 'both':
+            write(root / 'transcript_comparison_latest.json', {'path': str(report), 'signature': signature})
+        # Meta is the configured baseline in both modes; no automatic quality ranking or merging.
+        write(root / 'transcript_latest.json', {'path': str(output / 'meta' / 'reference.json'),
+                                              'engine': 'meta', 'complete': read(report)['complete'],
+                                              'comparison': str(report) if engine == 'both' else None,
+                                              'signature': signature})
+        state(root, 'transcript_review', 'Meta transcript saved as the editable baseline. Review names and timing.'
+              + (' Optional Whisper comparison saved separately.' if engine == 'both' else ''))
         return report
+
+
+def compare_project(project, model='small', language=None, start=0., duration=None,
+                    allow_download=False, device='cpu'):
+    return transcribe_project(project, model, language, start, duration, allow_download, device, engine='both')
 
 
 def compare_audio(audio, model='small', language=None, start=0., duration=40.,
                   allow_download=False, device='cpu'):
     """A bounded test on one explicitly supplied recording, without episode intake/editing."""
+    start = float(start)
     audio = Path(audio).expanduser().resolve()
     if not language:
         raise ValueError('Specify --language for the sample.')
