@@ -9,6 +9,8 @@ A reusable local podcast-editing workflow for Codex and Claude Code, with **Meta
 
 ## The workflow at a glance
 
+**Episode → reviewed clips:** agree count and duration first, then review/correct the entire timed Meta transcript before assembly. Choose captions on/off per video and original-file font/color/size variants. An approved spoken passage plays as an opening teaser and remains in the later conversation. The local review page exports corrections; the renderer requires current approval and preserves a clean video plus separate subtitles. See [clips and caption review](CLIPS.md). This adapts the local Shorts workflow from [YOUTUBETECHCRUSH](https://github.com/AvtandilMghebrishvili/YOUTUBETECHCRUSH).
+
 [![Six steps from episode files through default Meta Omnilingual ASR transcription to a Premiere project or rendered video](assets/podcut-workflow-guide.png)](assets/podcut-workflow-guide.png)
 
 1. Put one episode's video and audio in one folder.

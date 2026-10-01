@@ -8,6 +8,7 @@
 | Audio | Distinct final-clock mono stems, mild cleanup, shared normalization/limiting, measured combined mix | No guaranteed voice isolation, advanced denoising or perfect bleed suppression |
 | Color | Real frame comparisons, per-camera 3D LUTs, three starting looks | Correct input profile/LUT, white balance, exposure and camera matching need inspection |
 | Transcript | Meta CTC 300M by default; four formats, source/edit clocks and resumable receipts; optional Whisper comparison and listening report | Meta's token-based word boundaries are approximate; small CTC is not 7B/v2; language quality needs listening; comparison does not automatically merge text |
+| Clips/subtitles | Complete transcript review page; corrections; count/duration approval; repeated spoken hook with matching audio/text; clean and optional captioned MP4; real-font checks | Requires a matching local edited video; static cue captions, not forced-aligned karaoke; shortlist is heuristic; native Premiere captions and archive-fetching remain separate routes. See CLIPS.md |
 | Premiere | Original-media FCP7 XML, LUT handoff, installation guide | Native `.prproj` creation and app save/reopen review require installed Premiere access |
 | Render | Sequential H.264/AAC export, frame/decode/loudness checks, sampled audio alignment | Full editorial/visual review; different delivery codecs need an explicit implementation change |
 

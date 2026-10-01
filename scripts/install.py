@@ -10,7 +10,7 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-MODULES = ['numpy', 'scipy', 'soundfile', 'PIL', 'podcut']
+MODULES = ['numpy', 'scipy', 'soundfile', 'PIL', 'fontTools', 'podcut']
 
 
 def run(args):

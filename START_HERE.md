@@ -29,6 +29,8 @@ If **one camera + one mixed audio**: explicitly explain that speaker attribution
 
 Record answers in `project.json` and a short `.podcut/brief.md`. Use named roles such as `guest`, `host`, `host2`, `wide`; file IDs remain stable. A split multichannel file can have separate source entries with unique IDs and explicit zero-based channels. Set `mapping_confirmed` only after roles are established. See docs/WORKFLOW.md for the schema.
 
+Before episode processing, ask whether the output is a full episode, clips or both. Propose the count and duration as a question and wait for the user's choice; include the opening teaser in the proposed duration. Reuse answers already given. Read-only inventory/setup may continue while waiting. See docs/CLIPS.md for the complete review and subtitle workflow.
+
 ## 3. Color choice before committing the edit
 
 If color is requested: confirm source profiles, obtain any necessary manufacturer conversion LUT locally, and set per-camera exposure/white-balance corrections. Choose representative face/exposure frames from **each camera**, including later lighting conditions. Run `podcut colors PROJECT`; visually inspect the generated comparisons before showing them.
@@ -43,13 +45,15 @@ Use **Meta Omnilingual ASR alone by default**, following docs/TRANSCRIPTION.md. 
 
 ## 5. Edit and preserve independent sound
 
+**User transcript review precedes assembly:** show the complete Meta transcript with timestamps, accept corrections, and get confirmation of the current text/times. Ask captions on/off per video and offer real original-font/color/size samples or accept a supplied font file. Never use generated lettering. For each requested teaser, propose a real spoken passage and show its timecodes; place it first and retain it later in the conversation by default. Show resulting duration/order and wait for approval of the clips, hook and applicable style. Correcting text alone is not approval. Keep corrections separate from the original ASR draft. See docs/CLIPS.md for the local review page and approval-aware renderer.
+
 Locate the opening greeting/introduction and closing farewell. Record precise reference-clock `bounds`; use explicit keep intervals for agreed removals. Preserve speech and natural pauses. Avoid aggressive silence removal, guessed filler deletions or jump cuts within words.
 
 Create a proposed plan. Distinct mic dominance can suggest speaker turns; bleed/overlap means those suggestions need review. With shared audio, review timestamped turns manually or use an explicitly chosen static camera. Apply a calm interview rhythm; the helper's 38-second close / 7-second wide pattern is only a starting point. Review interruptions, reactions, long answers, every file boundary and any camera dropout. Fall back to available wide coverage; never extend a missing camera into black.
 
 Keep each camera role on a separate video lane, external guest/host microphones on separate audio lanes, and no scratch-camera audio in the final timeline. If only one mixed recording exists, keep one honestly named mix lane. Clean gently, align on one clock, and normalize the **combined** mix while preserving independent stems. Avoid gates that cut word tails and processors that introduce uncorrected delay.
 
-Review the plan and validate coverage, source ranges, frame counts, small residual drift and the intended boundaries before approving it. Agent editorial verification does not require another user approval unless the user requested it; color and delivery choices do. Prepare audio and retime the transcript into the edited timeline. Preserve both source and final timestamp versions.
+Review the plan and validate coverage, source ranges, frame counts, small residual drift and the intended boundaries before approving it. The user requested confirmation of count/duration, the full transcript, hook/cut choices and caption styling; do not replace those confirmations with agent self-review. Prepare audio and retime the transcript into the edited timeline, including repeated teaser ranges. Preserve both source and final timestamp versions. Any change to confirmed text/timing/order/style requires confirmation of the affected revised version before assembly.
 
 ## 6. Deliver the requested format
 

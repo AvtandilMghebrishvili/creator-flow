@@ -9,8 +9,9 @@ description = "A local, agent-guided podcast editing workflow for Codex and Clau
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md"]
 authors = [{name = "TECHcrush / Avtandil Mghebrishvili"}]
-dependencies = ["numpy>=1.24,<3", "scipy>=1.10,<2", "soundfile>=0.12,<1", "Pillow>=10,<13"]
+dependencies = ["numpy>=1.24,<3", "scipy>=1.10,<2", "soundfile>=0.12,<1", "Pillow>=10,<13", "fonttools>=4.50,<5"]
 
 [project.optional-dependencies]
 transcribe = ["sherpa-onnx>=1.13.8,<2", "huggingface-hub>=0.24,<2"]

@@ -4,6 +4,8 @@ For **editing a user's podcast**, read START_HERE.md and the podcut-flow skill. 
 
 **Transcription default: Meta Omnilingual ASR.** Use it for new source-clock transcripts and as the edited-clock baseline. Whisper/comparison is opt-in; see docs/TRANSCRIPTION.md. Preserve existing reviewed transcripts when resuming.
 
+**Episode/clip review:** follow docs/CLIPS.md. Propose output count and duration as a question and wait for the user's choice before production. Show the complete timestamped transcript for correction/confirmation before assembly or caption burn-in. Ask captions on/off per video and offer original-file font/color styles; no generated fonts. Use a real spoken hook as an opening teaser and retain it later in the conversation (repeat by default). Obtain confirmation of the current text, cuts, hook and applicable style; changes invalidate that confirmation. These gates apply to episode production, not coding/setup/tests.
+
 For **installing the workflow**, follow docs/SETUP.md and complete missing dependency/integration setup, reusing working tools. Installation alone does not require an episode folder. Do not stop at listing downloads when the user has asked you to perform setup.
 
 For **developing this repository**, inspect relevant code, make the change, run meaningful tests with `python -m pytest`, and update affected documentation. Do not start episode intake for a coding task. Keep dependencies modest and processing local. Use synthetic media in tests. Do not add real recordings, transcripts, personal filesystem paths, local-auth files or secrets. Independent source lanes, stable timebases, stale-output rejection and honest delivery labels are required behavior.

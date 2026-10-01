@@ -29,10 +29,28 @@ def parser():
         q.add_argument('--device',choices=['cpu','cuda'],default='cpu',help='Whisper device; Meta uses CPU with two threads.')
         if name=='transcribe':q.add_argument('--engine',choices=['meta','both','whisper'],default='meta')
     q=sub.add_parser('retime-transcript');q.add_argument('project');q.add_argument('--transcript')
+    q=sub.add_parser('clips-init',help='Start a review only after the user agrees count/duration.');q.add_argument('video');q.add_argument('transcript');q.add_argument('folder')
+    q.add_argument('--count',type=int,required=True);q.add_argument('--min-seconds',type=float,required=True);q.add_argument('--max-seconds',type=float,required=True);q.add_argument('--note',required=True)
+    for name in ['clips-propose','clips-review','clips-render']:
+        q=sub.add_parser(name);q.add_argument('review')
+    q=sub.add_parser('clips-import');q.add_argument('review');q.add_argument('corrections')
+    q=sub.add_parser('clips-font');q.add_argument('review');q.add_argument('font');q.add_argument('--origin',required=True)
+    q=sub.add_parser('clips-approve');q.add_argument('review');q.add_argument('--note',required=True);q.add_argument('--matching-video-note',required=True)
+    q=sub.add_parser('clips-brief');q.add_argument('review');q.add_argument('--count',type=int,required=True);q.add_argument('--min-seconds',type=float,required=True);q.add_argument('--max-seconds',type=float,required=True);q.add_argument('--note',required=True)
     q=sub.add_parser('premiere-luts');q.add_argument('project');q.add_argument('--native',required=True);q.add_argument('--preset',required=True);q.add_argument('--sequence-id',required=True);q.add_argument('--output',required=True);q.add_argument('--closed',action='store_true')
     return ap
 
 def execute(a):
+    if a.command.startswith('clips-'):
+        from . import clips
+        if a.command=='clips-init':return str(clips.init(a.video,a.transcript,a.folder,a.count,a.min_seconds,a.max_seconds,a.note))
+        if a.command=='clips-brief':return str(clips.set_brief(a.review,a.count,a.min_seconds,a.max_seconds,a.note))
+        if a.command=='clips-propose':return str(clips.propose(a.review))
+        if a.command=='clips-review':return str(clips.page(a.review))
+        if a.command=='clips-font':return str(clips.add_font(a.review,a.font,a.origin))
+        if a.command=='clips-import':return str(clips.import_review(a.review,a.corrections))
+        if a.command=='clips-approve':return str(clips.approve(a.review,a.note,a.matching_video_note))
+        if a.command=='clips-render':return str(clips.render(a.review))
     if a.command=='doctor':
         import platform
         return {'version':__version__,'python':sys.version.split()[0],'platform':platform.platform(),'ffmpeg':shutil.which('ffmpeg'),'ffprobe':shutil.which('ffprobe'),

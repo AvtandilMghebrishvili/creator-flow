@@ -145,3 +145,6 @@ Rendering is gated to `delivery: "render"` or `"both"`. The current encoder prod
 | `exports/` | Requested rendered video and encoded validation report |
 
 Output folders are versioned by input/plan signatures. Keep the original media, stems, LUTs and native project together or deliberately collect/relink them in Premiere before moving to another machine. Supply user-facing files and a concise handoff, not just internal logs.
+# Clip and caption review
+
+For the episode-to-Shorts route, see [CLIPS.md](CLIPS.md). Its local review page uses the complete final-clock Meta transcript and keeps real-font subtitles separate until the user approves text, times, hooks and style. Count and duration are agreed before production. This route consumes a matching edited local video; it does not trigger a full episode render in Premiere-only work.
