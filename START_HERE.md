@@ -35,6 +35,8 @@ If **one camera + one mixed audio**: explicitly explain that speaker attribution
 
 Record answers in `project.json` and a short `.podcut/brief.md`. Use named roles such as `guest`, `host`, `host2`, `wide`; file IDs remain stable. A split multichannel file can have separate source entries with unique IDs and explicit zero-based channels. Set `mapping_confirmed` only after roles are established. See docs/WORKFLOW.md for the schema.
 
+Offer optional episode/Shorts/Reels thumbnails alongside the output choice. Reuse an existing answer and save `decisions.thumbnail_requested` plus the chosen output IDs in the private thumbnail brief. Follow [docs/THUMBNAILS.md](docs/THUMBNAILS.md); the offer is not permission to generate or upload.
+
 Before episode processing, ask whether the output is a full episode, clips or both. Propose the count and duration as a question and wait for the user's choice; include the opening teaser in the proposed duration. Reuse answers already given. Read-only inventory/setup may continue while waiting. See docs/CLIPS.md for the complete review and subtitle workflow.
 
 ## 3. Color choice before committing the edit
@@ -61,9 +63,15 @@ Keep each camera role on a separate video lane, external guest/host microphones 
 
 Review the plan and validate coverage, source ranges, frame counts, small residual drift and the intended boundaries before approving it. The user requested confirmation of count/duration, the full transcript, hook/cut choices and caption styling; do not replace those confirmations with agent self-review. Prepare audio and retime the transcript into the edited timeline, including repeated teaser ranges. Preserve both source and final timestamp versions. Any change to confirmed text/timing/order/style requires confirmation of the affected revised version before assembly.
 
-## 6. Deliver the requested format
+## 6. Optional thumbnails from the actual conversation
+
+Follow [docs/THUMBNAILS.md](docs/THUMBNAILS.md) for accepted cover requests. Use the full reviewed episode for its thumbnail, and only the relevant selected passage/hook for a Short or Reel. Start with the real guest photo on the left and real host photo on the right, honor alternatives, and generate surrounding visual elements based on the topic. Missing photos need supplied portraits or identified, approved frames from the recording. Do not invent a replacement participant.
+
+Use the user's exact headline/CTA or offer concise content-based options. Honor an existing selection or delegated choice, show actual draft images, and inspect identity, wording and readability. Use an available image tool; CLI thumbnail choices do not themselves generate artwork. Save the private brief, source/range evidence and selected output files. This stage does not require rendering the full episode in Premiere-only mode, and it does not authorize publishing.
+
+## 7. Deliver the requested format
 
 - **Premiere:** follow docs/PREMIERE.md. Offer XML import as the simpler connection-free path, or help install/configure the upstream local MCP when automation is desired. Import originals, separate stems, and apply each approved camera LUT once. Save a new native `.prproj`, reopen it, and verify media links, sequence, cuts, colors, audio routing, playback and duration. Do not render the complete video. If app access is unavailable, supply the XML/LUT/stem package and exact remaining steps, and call it an exchange package—not a completed Premiere project.
 - **Render:** `podcut render PROJECT` only when selected. Inspect the final encoded file, including start/middle/end audio sync, actual colors and camera transitions. The helper checks duration, decodability, loudness/true peak and sampled audio alignment; it cannot certify editorial taste or lip sync.
 
-Deliver timestamped transcripts, the project/video, and a short plain-language handoff with verified facts, remaining uncertainty and relevant absolute paths. Keep receipts in `.podcut/`. Do not declare full completion when transcripts, color application, native reopening or requested review are still missing. Resuming must validate source/config signatures and reuse only valid completed work. Never put episode media, transcripts, credentials or local MCP configuration into the public repository.
+Deliver timestamped transcripts, the project/video, requested and inspected thumbnails mapped to their episode/clips, and a short plain-language handoff with verified facts, remaining uncertainty and relevant absolute paths. Keep receipts in `.podcut/`. Do not declare full completion when transcripts, color application, native reopening or requested review are still missing. Resuming must validate source/config signatures and reuse only valid completed work. Never put episode media, transcripts, credentials or local MCP configuration into the public repository.

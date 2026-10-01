@@ -175,6 +175,30 @@ Assemble these versions and preserve clean copies too.
 
 Changed text, timing, hooks or style requires confirmation of that changed version. The current module creates readable static phrase captions, not guaranteed word-aligned karaoke animation.
 
+<a id="thumbnails"></a>
+
+### Covers for the episode, Shorts and Reels
+
+The agent offers: **“A thumbnail for the full episode, the selected Shorts/Reels, both, or none?”** Existing answers are kept. Choose separately per clip when useful.
+
+An episode cover uses the reviewed full conversation; a clip cover uses that specific passage and hook. Start with **the real guest photo on the left and real host photo on the right**, surrounded by generated visuals related to the subject. Reverse or adapt the layout when requested. If portraits are missing, the agent offers suitable actual video frames for your selection.
+
+Supply the exact headline/call to action, or choose from the agent's concise content-based options. Revise the copy and inspect the actual artwork. Georgian/English wording, participant identity and spelling are checked before delivery.
+
+In `review.html`, every clip has **Thumbnail: Ask me / Yes / No** and **Cover text**. Leave text blank to request suggestions, then return the downloaded corrections JSON to the agent. These controls do not generate or upload an image themselves.
+
+```text
+$creator-flow I also want covers for this episode and the selected Shorts.
+Base each cover on the matching episode or clip content.
+Use real guest photos on the left and host photos on the right.
+Generate surrounding visuals that fit the discussion topic.
+Offer concise headline/CTA options and concepts first.
+Give each Short a cover relevant to its own passage.
+If photos are missing, show me suitable actual frames from the recording.
+```
+
+Use `/creator-flow` in Claude Code. Actual image generation requires an available image/editing tool; the Python installer does not bundle one. Deliverables are generated and inspected PNG/JPEG files. Uploading is a separate request. [Detailed workflow](THUMBNAILS.md).
+
 ## 8. Deliverables and practical limits
 
 | Output | Purpose |

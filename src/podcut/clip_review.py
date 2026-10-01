@@ -5,7 +5,12 @@ from pathlib import Path
 
 
 def build_page(data):
-    safe = json.dumps(data, ensure_ascii=False).replace("<", "\\u003c").replace(">", "\\u003e").replace("&", "\\u0026")
+    # JavaScript numbers cannot round-trip nanosecond timestamps exactly.
+    video = dict(data["video"])
+    for key in ("size", "mtime_ns"):
+        video[key] = str(video[key])
+    page_data = {**data, "video": video}
+    safe = json.dumps(page_data, ensure_ascii=False).replace("<", "\\u003c").replace(">", "\\u003e").replace("&", "\\u0026")
     font_css = []
     for font in data["fonts"]:
         # IDs are locally derived hashes, never user-supplied CSS names.
@@ -24,10 +29,10 @@ TEMPLATE = r'''<!doctype html><html lang="ka"><meta charset="utf-8">
 :root{color-scheme:light;font-family:system-ui,sans-serif;color:#122438;background:#eef3f5}
 *{box-sizing:border-box}body{max-width:1320px;margin:auto;padding:24px}h1{font-size:27px}h2{font-size:21px}
 header,.card{background:#fff;border:1px solid #d8e4e8;border-radius:14px;padding:22px;margin-bottom:18px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.muted{color:#52677a;font-size:14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.grid>.card{min-width:0}#fileNote{overflow-wrap:anywhere}.muted{color:#52677a;font-size:14px}
 button,.button{background:#007e86;color:white;border:0;border-radius:8px;padding:11px 16px;cursor:pointer;font:inherit}
 input,select,textarea{border:1px solid #a9bcc6;border-radius:6px;padding:8px;font:inherit;max-width:100%}
-input[type=number]{width:106px}textarea{width:100%;min-height:64px;resize:vertical}label{display:inline-flex;gap:8px;align-items:center;margin:7px}
+input[type=number]{width:106px}textarea{width:100%;min-height:64px;resize:vertical}label{display:inline-flex;flex-wrap:wrap;max-width:calc(100% - 14px);gap:8px;align-items:center;margin:7px}
 video{width:100%;max-height:330px;background:#101820;border-radius:9px}.clip{border-top:1px solid #d8e4e8;padding:15px 0}
 table{width:100%;border-collapse:collapse}td,th{text-align:left;border-bottom:1px solid #d8e4e8;padding:9px;vertical-align:top}
 th{position:sticky;top:0;background:white}td:first-child{width:240px}#sample{background:#183742;color:white;padding:25px;text-align:center;min-height:160px;border-radius:10px;overflow-wrap:anywhere}
@@ -56,6 +61,9 @@ th{position:sticky;top:0;background:white}td:first-child{width:240px}#sample{bac
 <section class="card"><h2>კლიპები და ჰუკი / Clips &amp; opening teaser</h2>
 <p>ჰუკი ვიდეოდან არჩეული რეალური მონაკვეთია. „Repeat“ დასაწყისში ტიზერს ამატებს და სრულ საუბარშიც ტოვებს.
 ხანგრძლივობა ტიზერის ჩათვლით ითვლება. დასაწყისისა და დასასრულის დროები დაამთხვიე ტექსტის საზღვრებს.</p>
+<p class="notice">თაბნეილიც გინდა? თითო კლიპზე აირჩიე და ჩაწერე სასურველი ტექსტი, ან აგენტს სთხოვე ვარიანტები.
+გამოიყენება ამ მონაკვეთის შინაარსი და რეალური ფოტოები. / Optional thumbnail: use this clip's topic and real guest/host photos.
+ეს მხოლოდ მოთხოვნას ინახავს; ფოტოს გენერაციას ან ატვირთვას არ იწყებს. / Saves a request, not a generated or approved image.</p>
 <div id="clips"></div><p id="errors" class="error"></p></section>
 <section class="card"><h2>სრული ტრანსკრიპტი / Full timed transcript</h2>
 <p class="muted">Meta-ს დროები მიახლოებითია: განსაკუთრებით გადაამოწმე სახელები, სიტყვის დასაწყისი/ბოლო და ჭრის ადგილები.
@@ -94,6 +102,18 @@ const originalHook=c.hook;c.hook=c.hook||{start:null,end:null,mode:'repeat'};
 box.append(numeric('Hook start',c.hook.start,v=>c.hook.start=v),numeric('Hook end',c.hook.end,v=>c.hook.end=v));
 const mode=el('select');mode.add(new Option('Repeat · ტიზერი და სრული საუბარი','repeat'));mode.add(new Option('Move · მხოლოდ დასაწყისში','move'));mode.value=c.hook.mode;mode.onchange=()=>{c.hook.mode=mode.value;change();timelines()};box.append(mode);
 const cap=el('select');cap.add(new Option('სუბტიტრები? / Captions?',''));cap.add(new Option('ჩართული / On','on'));cap.add(new Option('გამორთული / Off','off'));cap.value=c.captions===null?'':c.captions?'on':'off';cap.onchange=()=>{c.captions=cap.value===''?null:cap.value==='on';change()};box.append(el('label','Captions'),cap);
+const cover=c.thumbnail||{requested:null,text:''};c.thumbnail=cover;
+const thumbBox=el('div');thumbBox.className='thumbnail-request';thumbBox.append(el('h4','თაბნეილი / Thumbnail'));
+const thumb=el('select');thumb.dataset.thumbnailFor=c.id;
+thumb.add(new Option('შემომთავაზე / Ask me',''));thumb.add(new Option('მინდა / Yes','yes'));thumb.add(new Option('არ მინდა / No','no'));
+thumb.value=cover.requested===true?'yes':cover.requested===false?'no':'';
+thumb.onchange=()=>{cover.requested=thumb.value===''?null:thumb.value==='yes';change()};
+const thumbLabel=el('label','თაბნეილი / Thumbnail');thumbLabel.append(thumb);thumbBox.append(thumbLabel);
+const thumbText=el('textarea');thumbText.dataset.thumbnailTextFor=c.id;thumbText.value=cover.text||'';
+thumbText.placeholder='ჩემი ტექსტი, ან ცარიელი დატოვე შეთავაზებისთვის / Your wording, or leave blank for suggestions';
+thumbText.oninput=()=>{cover.text=thumbText.value;change()};
+const copyLabel=el('label','ტექსტი / Cover text');copyLabel.style.display='block';copyLabel.append(thumbText);thumbBox.append(copyLabel);
+box.append(thumbBox);
 const text=el('div');timelineNodes.push([c,text]);box.append(text);$('clips').append(box);
 });
 function timelines(){for(const[c,node]of timelineNodes){node.replaceChildren();if(!c.hook||c.hook.start===null||c.hook.end===null){node.append(el('p','ჰუკი ჯერ არჩეული არ არის / Choose the spoken hook.'));continue}

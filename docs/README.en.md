@@ -53,6 +53,12 @@ Choose an original Georgian/English font, size, text color and outline color/wid
 
 [Georgian Facebook announcement and cover](social/facebook-update.ka.md) are ready to share.
 
+## Covers that match the conversation
+
+The agent offers optional episode and per-Short/Reel thumbnails: real guest photo on the left, host on the right, and generated topic visuals around them. Supply exact headline/CTA copy or choose from suggestions. Each clip cover reflects its own passage. The review page records each clip's cover choice and wording; an available image tool creates the actual artwork for inspection.
+
+[User examples](USER_GUIDE.en.md#thumbnails) · [Thumbnail workflow and tooling](THUMBNAILS.md)
+
 ## The shared workflow
 
 1. Identify files, cameras and microphones; install missing dependencies. With one camera/shared mix, ask left/right seating and timed speaker examples. Do not promise clean independent voice separation.

@@ -8,7 +8,7 @@ Codex-სა და Claude Code-სთვის შექმნილი ად�
 
 **Podcut Flow + YOUTUBETECHCRUSH ახლა ერთ პროექტშია.** ორივეს კოდი და ცვლილებების ისტორია შენარჩუნებულია.
 
-[English](docs/README.en.md) · [აგენტისთვის / Start here](START_HERE.md) · [დაყენება](docs/SETUP.md) · [Shorts / Reels](docs/CLIPS.md) · [YouTube არქივი](docs/ARCHIVE.md) · [Premiere](docs/PREMIERE.md)
+[English](docs/README.en.md) · [აგენტისთვის / Start here](START_HERE.md) · [დაყენება](docs/SETUP.md) · [Shorts / Reels](docs/CLIPS.md) · [თაბნეილები](docs/THUMBNAILS.md) · [YouTube არქივი](docs/ARCHIVE.md) · [Premiere](docs/PREMIERE.md)
 
 ## პირველად აქედან დაიწყე
 
@@ -87,6 +87,12 @@ flowchart TD
 
 [განახლების Facebook პოსტი და ქავერი](docs/social/facebook-update.ka.md) — გასაზიარებლად მომზადებული ტექსტი და ფოტო.
 
+## თაბნეილებიც შესაბამისი შინაარსით
+
+ფლოუ შემოგთავაზებს სრული ეპიზოდისა და თითოეული Short/Reel-ის ქავერს. სტუმრის რეალური ფოტო მარცხნივ, წამყვანის მარჯვნივ, ირგვლივ საუბრის თემაზე შექმნილი ვიზუალი. ტექსტს/მოწოდებას თავად არჩევ ან აგენტის შეთავაზებებიდან ირჩევ; თითო კლიპის ქავერი მის საკუთარ მონაკვეთს ეყრდნობა.
+
+კლიპების გვერდზე უკვე არის **თაბნეილის არჩევანი და ტექსტის ველი**. სურათის დამზადებას აგენტი ხელმისაწვდომი გენერაციის ინსტრუმენტით ასრულებს და ნამუშევარს გადაგამოწმებინებს. [ქართული ახსნა და მაგალითი](docs/USER_GUIDE.ka.md#thumbnails) · [ტექნიკური ფლოუ](docs/THUMBNAILS.md).
+
 ## რას გკითხავს და რას მიიღებ
 
 | ეტაპი | შენი არჩევანი / შედეგი |
@@ -126,6 +132,7 @@ cd creator-flow
 | --- | --- |
 | ახალი პოდკასტი: წყაროები, სინქრონი, ფერი, მონტაჟი | [START_HERE.md](START_HERE.md), [ბრძანებები](docs/WORKFLOW.md) |
 | Shorts / Reels: ტრანსკრიპტის გვერდი, რეალური ჰუკი და სუბტიტრები | [CLIPS.md](docs/CLIPS.md) |
+| თაბნეილები: რეალური ფოტოები, შესაბამისი თემა და არჩეული ტექსტი | [THUMBNAILS.md](docs/THUMBNAILS.md) |
 | YouTube არქივი: სუბტიტრების მიღება, არხის მონაცემები, მონაკვეთების ძიება | [ARCHIVE.md](docs/ARCHIVE.md) |
 | Premiere: იმპორტი ან MCP, შენახვა და გადამოწმება | [PREMIERE.md](docs/PREMIERE.md) |
 

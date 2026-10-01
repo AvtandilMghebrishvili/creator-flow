@@ -201,3 +201,64 @@ def test_actual_render_repeats_hook_video_audio_and_captions(tmp_path):
         freq = np.argmax(abs(np.fft.rfft(samples))) * 16000 / len(samples)
         assert abs(freq - (880 if expected_blue else 440)) < 10
     assert "subtitles" not in entry["clean"]
+
+
+def test_thumbnail_choices_roundtrip_without_becoming_image_approval(review, tmp_path):
+    select(review)
+    clips.approve(review, "Approved video", "Checked video clock")
+    incoming = read(review)
+    incoming['clips'][0]['thumbnail'] = {
+        'requested': True, 'text': 'ჩემი სათაური | exact copy',
+        'approved': True, 'output': '/not-a-generated-image.png'}
+    edited = tmp_path/'corrections.json'
+    write(edited, incoming)
+    clips.import_review(review, edited)
+    saved = read(review)
+    assert saved['clips'][0]['thumbnail'] == {'requested': True, 'text': 'ჩემი სათაური | exact copy'}
+    assert saved['approval'] is None
+    # An older correction page must not erase the saved yes/no answer or copy.
+    incoming['clips'][0].pop('thumbnail')
+    write(edited, incoming)
+    clips.import_review(review, edited)
+    assert read(review)['clips'][0]['thumbnail'] == saved['clips'][0]['thumbnail']
+
+
+@pytest.mark.parametrize('value', [None, {'requested': 'yes'}, {'requested': 1}, {'requested': False, 'text': []}])
+def test_invalid_thumbnail_request_is_not_written(review, tmp_path, value):
+    select(review)
+    original = review.read_bytes()
+    incoming = read(review)
+    incoming['clips'][0]['thumbnail'] = value
+    edited = tmp_path/'invalid.json'
+    write(edited, incoming)
+    with pytest.raises(ValueError, match='Thumbnail'):
+        clips.import_review(review, edited)
+    assert review.read_bytes() == original
+
+
+@pytest.mark.parametrize('requested', [None, False, True])
+def test_optional_thumbnail_request_does_not_block_video_approval(review, requested):
+    data = select(review)
+    data['clips'][0]['thumbnail'] = {'requested': requested, 'text': ''}
+    write(review, data)
+    clips.approve(review, 'Approved video, cover handled separately', 'Video clock checked')
+    assert read(review)['approval']['signature']
+
+
+def test_browser_fingerprint_keeps_exact_nanoseconds_and_rejects_a_changed_stamp(review, tmp_path):
+    import json
+    import re
+    select(review)
+    before = read(review)
+    html = clips.page(review).read_text(encoding='utf-8')
+    browser = json.loads(re.search(r'<script id="data" type="application/json">(.*?)</script>', html, re.S).group(1))
+    for key in ('size', 'mtime_ns'):
+        assert browser['video'][key] == str(before['video'][key])
+    edited = tmp_path/'browser.json'
+    write(edited, browser)
+    clips.import_review(review, edited)
+    assert read(review)['video'] == before['video']
+    browser['video']['mtime_ns'] = str(before['video']['mtime_ns'] + 1)
+    write(edited, browser)
+    with pytest.raises(ValueError, match='another source'):
+        clips.import_review(review, edited)

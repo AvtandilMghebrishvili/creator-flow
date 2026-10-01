@@ -31,16 +31,18 @@ def skill_text(repo):
     location = repo.as_posix()
     return f'''---
 name: creator-flow
-description: Edit local podcasts and reviewed Shorts or Reels, or research a YouTube archive, with Meta transcription and optional Premiere delivery. Use for real-recording production, not unrelated coding or generated presenter videos.
+description: Edit local podcasts and reviewed Shorts or Reels, or research a YouTube archive, with Meta transcription, optional thumbnails and Premiere delivery. Use for real-recording production, not unrelated coding or generated presenter videos.
 ---
 
-# Creator Flow — Podcasts, Shorts & Reels
+# Creator Flow | Podcasts, Shorts & Reels
 
 The installed checkout is `{location}`. Read `{location}/START_HERE.md` and `{location}/.agents/skills/creator-flow/SKILL.md` as the canonical workflow. Resolve their supporting files from that checkout, not from this personal skill folder. Keep the checkout in place; rerun scripts/register_skill.py if it moves.
 
 For a user walkthrough read `{location}/docs/USER_GUIDE.ka.md` or `{location}/docs/USER_GUIDE.en.md`. For archive work use its docs/ARCHIVE.md; for reviewed clips use docs/CLIPS.md. Use the checkout's .venv executable (`Scripts/creator-flow.exe` on Windows, `bin/creator-flow` elsewhere). Do not clone a second archive toolkit.
 
 Reuse the user's existing choices. Ask for the intended sources and propose count/duration before production. New transcription defaults to Meta Omnilingual ASR. Show the complete timed transcript for correction and confirmation before assembly. Offer captions on/off and original-file fonts/colors. Prepend the approved spoken teaser and retain its later occurrence; confirm current text, ranges, hook and applicable style. Preserve clean video and editable subtitles. Premiere-only delivery never forces a full episode render. Publishing needs the user's explicit request. These production gates do not impose episode-intake questions on coding/setup.
+
+Offer optional episode and per-clip thumbnails using `{location}/docs/THUMBNAILS.md`. Reuse yes/no answers. Use the full episode's reviewed content for its cover and each Short/Reel's selected passage for its own cover. Use real identified guest/host photos (guest left, host right unless changed), generate relevant surrounding topic visuals, and use the user's exact text or propose concise options. Missing portraits need supplied photos or approved actual frames. Deliver covers only after actual generation/inspection; image tools are agent-managed and not bundled with the CLI.
 '''
 
 

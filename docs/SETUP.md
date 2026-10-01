@@ -103,3 +103,7 @@ For Premiere use the [dedicated guide](PREMIERE.md). The agent installs a missin
 ## Long recordings
 
 Use one heavy job at a time. Helpers use two CPU threads where supported and a `.podcut/worker.lock`. Do not remove the lock until you have verified the recorded process stopped. WAV stems can exceed several GB; use a filesystem with large-file support. Rendering needs space for shot intermediates and the final file. Confirm actual disk capacity against source duration, microphone count and chosen delivery. Keep the application responsive and persist status between stages.
+
+## Optional thumbnail tools
+
+Thumbnail offers and the clip review's yes/no/text controls require no new Python package. Actual artwork uses the agent client's available image-generation/editing tool with photo-reference support. Built-in image tools or an already connected service should be reused; the installer does not silently install a paid image plugin or include image-generation credits. If the requested client lacks such a tool, prepare the references/brief and explain the needed connection, then complete the setup the user chooses. Store provider credentials outside the repository. See [THUMBNAILS.md](THUMBNAILS.md).

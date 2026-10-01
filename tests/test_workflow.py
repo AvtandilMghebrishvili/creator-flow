@@ -17,7 +17,7 @@ def test_cube_identity(tmp_path):
     assert np.max(abs(apply_cube(x,read_cube(path))-x))<1e-6
 
 def test_intake_single_camera_mixed_audio_is_ambiguous():
-    p={'sources':[{'id':'c','kind':'camera','role':'wide','use':True},{'id':'c2','kind':'camera','role':'wide','use':True}], 'decisions':{'mapping_confirmed':True,'language':'en','color_requested':False,'delivery':'premiere'},
+    p={'sources':[{'id':'c','kind':'camera','role':'wide','use':True},{'id':'c2','kind':'camera','role':'wide','use':True}], 'decisions':{'mapping_confirmed':True,'language':'en','color_requested':False,'delivery':'premiere','thumbnail_requested':False},
        'reference_id':'a','audio':{'tracks':[{'speaker':'mix'}]},'bounds':[0,10],'layout':{},'speaker_examples':[]}
     assert any('left/right' in q for q in questions(p))
     p['layout']={'confirmed':True};p['speaker_examples']=[{'speaker':'guest','time':2},{'speaker':'host','time':5}]
@@ -34,6 +34,7 @@ def test_real_media_pipeline_unicode_folder(tmp_path):
     sf.write(folder/'host.wav',y,sr,subtype='PCM_24')
     ffmpeg(['-f','lavfi','-i','testsrc2=size=320x180:rate=30','-i',str(folder/'microphone.wav'),'-t','14','-c:v','libx264','-threads','2','-preset','ultrafast','-c:a','aac','-y',str(folder/'camera.mov')])
     config=init(folder);p,root=load(config)
+    assert p['decisions']['thumbnail_requested'] is None
     cam=next(s for s in p['sources'] if s['kind']=='camera')
     mic=next(s for s in p['sources'] if Path(s['path']).name=='microphone.wav')
     host=next(s for s in p['sources'] if Path(s['path']).name=='host.wav')
@@ -79,3 +80,15 @@ def test_real_media_pipeline_unicode_folder(tmp_path):
     with pytest.raises(ValueError,match='already exists'):render(config)
     p,_=load(config);next(s for s in p['sources'] if s['kind']=='camera')['color_correction']={'exposure':.3};write(config,p)
     with pytest.raises(ValueError,match='stale'):approve(config,'warm')
+
+
+def test_thumbnail_offer_resumes_without_repeating_answer():
+    p = {'sources': [], 'decisions': {'mapping_confirmed': True, 'language': 'en',
+         'color_requested': False, 'delivery': 'premiere'}, 'reference_id': 'audio', 'bounds': [0, 10]}
+    initial = questions(p)
+    assert len(initial) == 1  # Older manifests also receive the optional offer.
+    for answer in (True, False):
+        p['decisions']['thumbnail_requested'] = answer
+        assert questions(p) == []
+    p['decisions']['thumbnail_requested'] = None
+    assert questions(p) == initial

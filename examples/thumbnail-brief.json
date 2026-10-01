@@ -1,0 +1,73 @@
+{
+  "schema": "creator-flow-thumbnail-brief-v1",
+  "note": "Fictional agent-owned planning example. No image has been generated or approved.",
+  "outputs": [
+    {
+      "id": "episode-cover",
+      "kind": "episode",
+      "requested": true,
+      "aspect_ratio": "16:9",
+      "content": {
+        "transcript": "transcripts/episode.json",
+        "clock": "final timeline seconds",
+        "ranges": [
+          [
+            120,
+            180
+          ]
+        ],
+        "topic": "Replace with the reviewed episode topic",
+        "review_signature": null
+      },
+      "people": [
+        {
+          "role": "guest",
+          "side": "left",
+          "photo": null,
+          "source_frame": null
+        },
+        {
+          "role": "host",
+          "side": "right",
+          "photo": null,
+          "source_frame": null
+        }
+      ],
+      "text": {
+        "source": "agent_proposal",
+        "options": [],
+        "selected": null
+      },
+      "visual_concept": null,
+      "tool": null,
+      "prompt": null,
+      "status": "awaiting_photos_and_copy",
+      "files": []
+    },
+    {
+      "id": "clip-01-cover",
+      "kind": "clip",
+      "clip_id": "clip-01",
+      "requested": null,
+      "aspect_ratio": "9:16",
+      "content": {
+        "review": "clips/review.json",
+        "clock": "media seconds",
+        "ranges": [],
+        "topic": null,
+        "review_signature": null
+      },
+      "people": [],
+      "text": {
+        "source": null,
+        "options": [],
+        "selected": null
+      },
+      "visual_concept": null,
+      "tool": null,
+      "prompt": null,
+      "status": "offer_pending",
+      "files": []
+    }
+  ]
+}

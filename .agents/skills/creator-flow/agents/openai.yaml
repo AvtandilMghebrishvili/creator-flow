@@ -1,4 +1,4 @@
 interface:
-  display_name: "Creator Flow"
-  short_description: "Podcasts, Shorts and Reels with Meta and transcript review"
-  default_prompt: "Use $creator-flow to prepare my podcast or Shorts/Reels with Meta transcription and review before assembly."
+  display_name: "Creator Flow | Podcasts, Shorts & Reels"
+  short_description: "Podcasts, clips, captions and optional thumbnails"
+  default_prompt: "Use $creator-flow to prepare my podcast or Shorts/Reels with Meta and transcript review, and offer matching thumbnails."

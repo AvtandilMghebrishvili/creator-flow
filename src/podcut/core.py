@@ -143,7 +143,7 @@ def init(folder):
     p = {"schema_version": 1, "episode": folder.name, "source_folder": str(folder), "sources": found,
          "reference_id": None, "speakers": [], "layout": {}, "speaker_examples": [],
          "timeline": {"fps": "25/1", "width": 1920, "height": 1080}, "sync": {},
-         "decisions": {"color_requested": None, "delivery": None, "language": None, "mapping_confirmed": False},
+         "decisions": {"color_requested": None, "delivery": None, "language": None, "mapping_confirmed": False, "thumbnail_requested": None},
          "color": {"approved": None, "luts": {}}, "audio": {"tracks": []}, "bounds": None}
     write(dest / "project.json", p)
     write(dest / "inventory_errors.json", errors)
@@ -163,6 +163,8 @@ def questions(p):
         q.append("Are colors already finished? Keep them, or prepare several graded alternatives for you to choose?")
     if not p["decisions"].get("delivery"):
         q.append("Do you want a rendered video, or an editable Premiere project for you to review and render? If Premiere: is it installed, and on which OS/version?")
+    if p["decisions"].get("thumbnail_requested") is None:
+        q.append("Would you like content-based thumbnails for the episode, Shorts/Reels, or both? You can decline. Use real guest/host photos, topic visuals and your own text or suggested wording; confirm which outputs need covers.")
     camera_roles = {s.get('role') or s['id'] for s in active if s['kind'] == 'camera'}
     if len(camera_roles) == 1 and len(p.get("audio", {}).get("tracks", [])) <= 1:
         if not p.get("layout", {}).get("confirmed") or len(p.get("speaker_examples", [])) < 2:

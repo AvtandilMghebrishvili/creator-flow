@@ -21,12 +21,14 @@ Important fields (fragments, not a complete runnable manifest):
   "speakers": [{"id": "guest", "name": "Guest name"}, {"id": "host", "name": "Host name"}],
   "timeline": {"fps": "25/1", "width": 1920, "height": 1080},
   "audio": {"tracks": [{"source_id": "s04", "speaker": "guest"}, {"source_id": "s05", "speaker": "host"}]},
-  "decisions": {"mapping_confirmed": true, "language": "ka", "color_requested": true, "delivery": "premiere"},
+  "decisions": {"mapping_confirmed": true, "language": "ka", "color_requested": true, "delivery": "premiere", "thumbnail_requested": null},
   "layout": {"confirmed": true, "left": "guest", "right": "host"},
   "speaker_examples": [{"reference": 18.2, "speaker": "host"}, {"reference": 42.1, "speaker": "guest"}],
   "bounds": [16.28, 3610.64]
 }
 ```
+
+`decisions.thumbnail_requested` is optional: null/absent asks once, true records interest, false skips the offer. Scope and creative choices are kept in the agent-owned `thumbnails/brief.json`. This preference does not block otherwise approved video work or invoke an image service. See [THUMBNAILS.md](THUMBNAILS.md).
 
 All time values are **seconds**, unless a field explicitly says frames. `bounds` and editorial turns use the common reference clock. Source-local times are a different clock. Do not infer seating from this example.
 
@@ -143,6 +145,7 @@ Rendering is gated to `delivery: "render"` or `"both"`. The current encoder prod
 | `transcript_comparison_latest.json`, `transcripts/dual_*/comparison.html` | Optional comparison only: both drafts, per-window differences and local listening page |
 | `exchange/` | Premiere XML and color handoff |
 | `exports/` | Requested rendered video and encoded validation report |
+| `thumbnails/` | Optional private cover brief, topic/source evidence, references and actually generated final images |
 
 Output folders are versioned by input/plan signatures. Keep the original media, stems, LUTs and native project together or deliberately collect/relink them in Premiere before moving to another machine. Supply user-facing files and a concise handoff, not just internal logs.
 # Clip and caption review

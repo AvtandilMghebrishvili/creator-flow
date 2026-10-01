@@ -1,6 +1,6 @@
 ---
 name: creator-flow
-description: Guide local podcast editing, reviewed Shorts and Reels, or YouTube archive research with Meta transcription, original-font captions, spoken teasers and Premiere or rendered delivery. Use for real-recording production and archive/channel analysis, not unrelated coding or generated presenter videos.
+description: Guide local podcast editing, reviewed Shorts and Reels, or YouTube archive research with Meta transcription, original-font captions, spoken teasers, optional thumbnails and Premiere or rendered delivery. Use for real-recording production and archive/channel analysis, not unrelated coding or generated presenter videos.
 ---
 
 # Creator Flow for Claude Code
@@ -16,3 +16,5 @@ Ask for the episode folder if absent, preserve the user's existing answers, and 
 Complete the installation as part of setup: reuse working tools, install missing dependencies with the repository installer, and install/configure a missing MCP/UXP plugin for requested Premiere automation. Check the resulting connection; do not stop at providing download links. User participation is only needed for a real blocked OS/account/interactive step.
 
 For YouTube archive/channel research use [the bundled archive guide](../../../docs/ARCHIVE.md) and `creator-flow archive`. This code is already in the same repository; do not clone a second toolkit. Ask for the authorized archive source/workspace. New transcript generation still defaults to Meta, and all production review gates above apply. Use original archive metadata/hooks/strategy references only when relevant.
+
+Offer optional full-episode and per-Short/Reel thumbnails; follow [thumbnail guidance](../../../docs/THUMBNAILS.md). Reuse existing yes/no choices. Ground the episode cover in the reviewed full conversation and each clip cover in that clip's actual passage. Use real identified guest/host photos, initially guest left and host right, with generated surroundings based on the relevant topic. Ask for missing portraits or offer actual source frames. Use supplied wording verbatim or propose concise headline/CTA options for the user to choose, honoring delegated choices. Generate/inspect actual images with an available image tool; missing tooling is not a finished thumbnail. Keep private briefs and final paths, and do not upload without a separate request.

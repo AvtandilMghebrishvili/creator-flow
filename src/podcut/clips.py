@@ -180,7 +180,7 @@ def propose(path):
         if any(row["start"] < c["end"] and row["end"] > c["start"] for c in chosen):
             continue
         chosen.append({"id": f"clip-{len(chosen) + 1:02}", "start": row["start"], "end": row["end"],
-                       "hook": None, "captions": None})
+                       "hook": None, "captions": None, "thumbnail": {"requested": None, "text": ""}})
         if len(chosen) == brief["count"]:
             break
     data["clips"] = chosen
@@ -276,6 +276,19 @@ def validate_style(data):
     return font
 
 
+def thumbnail_request(value):
+    """Only an optional cover request and exact copy, never a generation receipt."""
+    if not isinstance(value, dict):
+        raise ValueError("Thumbnail preference must contain requested and text fields.")
+    requested = value.get("requested")
+    if requested is not None and not isinstance(requested, bool):
+        raise ValueError("Thumbnail requested must be true, false or null.")
+    text = value.get("text", "")
+    if not isinstance(text, str):
+        raise ValueError("Thumbnail text must be a string; leave it empty for suggestions.")
+    return {"requested": requested, "text": text}
+
+
 def validate_selection(data):
     require_brief(data)
     if data["layout"] not in {"blur", "crop", "source"}:
@@ -287,6 +300,8 @@ def validate_selection(data):
         if not re.fullmatch(r"[A-Za-z0-9_-]{1,60}", clip["id"]) or clip["id"] in ids:
             raise ValueError("Use unique simple clip identifiers.")
         ids.add(clip["id"])
+        if "thumbnail" in clip:
+            thumbnail_request(clip["thumbnail"])
         if not isinstance(clip.get("captions"), bool):
             raise ValueError("Ask whether captions should be on or off for every video.")
         ranges = clip_ranges(clip, data["duration"])
@@ -310,8 +325,21 @@ def approve(path, confirmation, matching_video_note):
 def import_review(path, edited):
     data, _ = load_review(path)
     incoming = read(edited)
-    if incoming.get("schema") != SCHEMA or incoming.get("video") != data["video"] or incoming.get("transcript_source") != data["transcript_source"]:
+    incoming_video = incoming.get("video")
+    if isinstance(incoming_video, dict):
+        incoming_video = dict(incoming_video)
+        for key in ("size", "mtime_ns"):
+            # Accept exact decimal browser strings, never rounded numeric matches.
+            if incoming_video.get(key) == str(data["video"][key]):
+                incoming_video[key] = data["video"][key]
+    if incoming.get("schema") != SCHEMA or incoming_video != data["video"] or incoming.get("transcript_source") != data["transcript_source"]:
         raise ValueError("This correction file belongs to another source/review.")
+    # Preserve a saved cover choice when importing a page made before that feature.
+    previous = {c["id"]: c.get("thumbnail") for c in data["clips"]}
+    for clip in incoming["clips"]:
+        preference = clip.get("thumbnail", previous.get(clip["id"]))
+        if preference is not None or "thumbnail" in clip:
+            clip["thumbnail"] = thumbnail_request(preference)
     # Browser corrections cannot change paths, font bytes, approvals or source identity.
     for key in ("cues", "clips", "style", "layout"):
         data[key] = incoming[key]

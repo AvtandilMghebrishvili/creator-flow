@@ -13,3 +13,5 @@ For **developing this repository**, inspect relevant code, make the change, run 
 Skill location: `.agents/skills/creator-flow/SKILL.md`. Detailed setup and implementation usage are under `docs/`.
 
 Archive tools are bundled in `src/podcut/youtube/`; read `docs/ARCHIVE.md` for that route. Use the unified `creator-flow` command (`podcut` remains an alias). For archive/integration changes run `node --test tests/selection.test.mjs` as well as relevant Python tests. Preserve both original Git histories and attribution.
+
+**Optional thumbnails:** offer episode and per-Short/Reel covers, preserving accepted/declined choices. Follow docs/THUMBNAILS.md: use the matching reviewed content, real identified guest/host photos on opposite sides, relevant generated topic visuals, and supplied or chosen headline/CTA text. A clip cover must reflect that clip. Missing references/tooling need explicit handling; a request is not a generated image. Keep receipts private and upload only on a separate request.
