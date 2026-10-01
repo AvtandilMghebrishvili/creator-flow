@@ -1,6 +1,6 @@
-# Creator Flow — Podcasts, Shorts & Reels
+# Creator Flow | Podcasts, Shorts & Reels
 
-<img src="assets/creator-flow-logo.png" alt="Creator Flow — Podcasts, Shorts & Reels" width="760">
+<img src="assets/creator-flow-logo.png" alt="Creator Flow | Podcasts, Shorts & Reels" width="760">
 
 **One local workflow for podcasts, Shorts/Reels and YouTube archives, guided by Codex or Claude Code.** Podcut Flow and YOUTUBETECHCRUSH are consolidated in this repository, with both Git histories preserved. There is one installer, one agent entry point and no second checkout to manage.
 

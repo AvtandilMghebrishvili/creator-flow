@@ -1,6 +1,6 @@
-# Creator Flow — Podcasts, Shorts & Reels
+# Creator Flow | Podcasts, Shorts & Reels
 
-<img src="docs/assets/creator-flow-logo.png" alt="Creator Flow — Podcasts, Shorts & Reels" width="760">
+<img src="docs/assets/creator-flow-logo.png" alt="Creator Flow | Podcasts, Shorts & Reels" width="760">
 
 **ერთი ფლოუ — სრული პოდკასტიდან Shorts-სა და Reels-მდე.**
 

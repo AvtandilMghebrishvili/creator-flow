@@ -36,6 +36,6 @@ The old `render-short.js` is retained as `creator-flow archive legacy-render` fo
 
 ## Migration and compatibility
 
-The public project is **Creator Flow — Podcasts, Shorts & Reels**. `creator-flow` is the preferred command; `podcut` and `python -m podcut` remain equivalent for existing projects. The Python distribution/module and private `.podcut/` state retain their original identifiers to avoid breaking saved work. Existing checkouts and virtual environments can stay at their current path; update the Git remote and rerun the installer. Do not rename an active `.venv` directory to rebrand it.
+The public project is **Creator Flow | Podcasts, Shorts & Reels**. `creator-flow` is the preferred command; `podcut` and `python -m podcut` remain equivalent for existing projects. The Python distribution/module and private `.podcut/` state retain their original identifiers to avoid breaking saved work. Existing checkouts and virtual environments can stay at their current path; update the Git remote and rerun the installer. Do not rename an active `.venv` directory to rebrand it.
 
 The imported JavaScript is shipped in `src/podcut/youtube/`, including built wheels. Archive tests live with the Python tests and run in the same Windows/Linux CI. YOUTUBETECHCRUSH is retained only as a historical repository pointing here; future changes belong here.
