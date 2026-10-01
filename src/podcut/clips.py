@@ -6,6 +6,7 @@ THIRD_PARTY_NOTICES.md. No recognition, downloads or uploads happen here.
 from __future__ import annotations
 
 import hashlib
+from itertools import islice
 import math
 from pathlib import Path
 import re
@@ -151,7 +152,7 @@ def candidates(cues, minimum, maximum):
     found = []
     for i, first in enumerate(cues):
         rows = []
-        for cue in cues[i:]:
+        for cue in islice(cues, i, None):
             if cue["end"] - first["start"] > maximum:
                 break
             rows.append(cue)
@@ -431,7 +432,7 @@ def render(path):
             for i, (a, b) in enumerate(ranges):
                 # Seek each bounded passage; avoid buffering an entire long episode
                 # while concat waits for a hook that occurs later in the source.
-                inputs += ["-ss", str(a), "-t", str(b - a), "-i", data["video"]["path"]]
+                inputs += ["-threads", "2", "-ss", str(a), "-t", str(b - a), "-i", data["video"]["path"]]
                 graph += [f"[{i}:v:0]setpts=PTS-STARTPTS,fps=30[v{i}]",
                           f"[{i}:a:0]asetpts=PTS-STARTPTS,aresample=48000[a{i}]"]
                 labels.append(f"[v{i}][a{i}]")
@@ -439,7 +440,7 @@ def render(path):
             graph.append("[joined]" + _layout_filter(data["layout"]) + "[video]")
             clean = output / (clip["id"] + "-clean.mp4")
             _encode([*inputs, "-filter_complex", ";".join(graph),
-                     "-map", "[video]", "-map", "[audio]", "-c:v", "libx264", "-preset", "fast",
+                     "-map", "[video]", "-map", "[audio]", "-c:v", "libx264", "-threads", "2", "-preset", "fast",
                      "-crf", "20", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k",
                      "-movflags", "+faststart", str(clean)], output)
             verify_video(clean, duration)
@@ -452,7 +453,7 @@ def render(path):
                 ass.write_text(ass_text(cues, data["style"], font, 1080, h), encoding="utf-8")
                 captioned = output / (clip["id"] + "-captioned.mp4")
                 _encode(["-i", str(clean), "-vf", f"subtitles={ass.name}:fontsdir=fonts",
-                         "-map", "0:v:0", "-map", "0:a:0", "-c:v", "libx264", "-preset", "fast",
+                         "-map", "0:v:0", "-map", "0:a:0", "-c:v", "libx264", "-threads", "2", "-preset", "fast",
                          "-crf", "20", "-pix_fmt", "yuv420p", "-c:a", "copy", "-movflags", "+faststart",
                          str(captioned)], output)
                 verify_video(captioned, duration)
