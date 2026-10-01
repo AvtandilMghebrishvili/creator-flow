@@ -6,7 +6,7 @@
 
 Run the usual `Install.ps1` / `python3 scripts/install.py`. Its `transcribe` extra includes `sherpa-onnx` and the model-download helper. Existing installations are reused; already installed Whisper is preserved but not used by default. The installer verifies libraries; **weights and actual recognition are verified by running a sample**.
 
-For an existing, synchronized Podcut project:
+For an existing, synchronized Creator Flow project:
 
 ```sh
 podcut transcribe PROJECT --language ka --start 60 --seconds 40 --allow-download
@@ -42,7 +42,7 @@ The standalone command only decodes the requested interval of the first audio st
 
 The Meta adapter uses [sherpa-onnx's documented Omnilingual support](https://k2-fsa.github.io/sherpa/onnx/omnilingual-asr/models.html), which works on native Windows, macOS and Linux where compatible Python wheels exist. It does not install WSL, fairseq2, a new GPU stack or a Premiere plugin. The model repository revision and SHA-256 checksums for weights, tokens and license are pinned in `src/podcut/asr_models.py` and verified before use. Corrupt files are rejected. Models live in the normal Hugging Face cache, outside Git.
 
-This is **not** the 7B LLM, the December v2 checkpoint or the older MMS model. Do not attribute their benchmark results to this 300M conversion. [Meta's Omnilingual code/models](https://github.com/facebookresearch/omnilingual-asr#license) and [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) use Apache-2.0; Whisper uses MIT. Model files and license notices remain in their cache; no weights are redistributed with Podcut. There is no per-minute model fee for local use; hardware/cloud rental and the user's editor subscriptions are separate.
+This is **not** the 7B LLM, the December v2 checkpoint or the older MMS model. Do not attribute their benchmark results to this 300M conversion. [Meta's Omnilingual code/models](https://github.com/facebookresearch/omnilingual-asr#license) and [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) use Apache-2.0; Whisper uses MIT. Model files and license notices remain in their cache; no weights are redistributed with Creator Flow. There is no per-minute model fee for local use; hardware/cloud rental and the user's editor subscriptions are separate.
 
 The CTC model detects languages from audio; it does not accept language conditioning. `--language ka` labels the Meta transcript and guides Whisper when explicitly selected. A supported language does not guarantee readable results on every recording. `--device cuda` applies **only to optional Whisper**, using already-compatible CUDA dependencies; Meta always uses CPU here. Comparison loads the two models one at a time.
 

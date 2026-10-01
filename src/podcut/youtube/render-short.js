@@ -51,6 +51,7 @@ export function render({ videoId, startSec, endSec, hook = '', outName, layout =
   if (!fs.existsSync(src)) {
     console.log(`downloading ${dlStart}-${endSec + PAD}s ...`);
     execFileSync(TOOLS.ytdlp, [
+      '--js-runtimes', `node:${process.execPath}`,
       '-f', 'bv*[height<=1080][ext=mp4]+ba[ext=m4a]/b[height<=1080]',
       '--download-sections', `*${dlStart}-${endSec + PAD}`, '--force-keyframes-at-cuts',
       '--ffmpeg-location', path.dirname(TOOLS.ffmpeg),

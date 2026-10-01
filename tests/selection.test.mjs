@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { score } from '../skills/youtube-techcrush/scripts/lib/segment.js';
-import { analyse } from '../skills/youtube-techcrush/scripts/channel-stats.js';
+import { score } from '../src/podcut/youtube/lib/segment.js';
+import { analyse } from '../src/podcut/youtube/channel-stats.js';
 
 test('Georgian stems match at Unicode word boundaries',()=>{
   assert.ok(score('ნასა კოსმოსში პირველად მახსოვს').score>0);

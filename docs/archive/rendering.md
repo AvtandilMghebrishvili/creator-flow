@@ -1,4 +1,6 @@
-# Rendering
+# Legacy archive rendering
+
+This reference describes `creator-flow archive legacy-render`, preserved for compatibility. For the current review gates, original-font previews, captions on/off, clean copies and repeated spoken teaser use [CLIPS.md](../CLIPS.md).
 
 Output target: **1080×1920, H.264, AAC 48 kHz, faststart.** YouTube re-encodes anyway,
 so aim for a clean high-bitrate master rather than a small file.

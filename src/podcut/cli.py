@@ -8,10 +8,14 @@ from . import __version__
 from .core import init,load,read,write,questions,digest,source,state
 
 def parser():
-    ap=argparse.ArgumentParser(prog='podcut',description='Local podcast tools, guided by your AI editor. Start with START_HERE.md.')
+    ap=argparse.ArgumentParser(prog=Path(sys.argv[0]).stem if Path(sys.argv[0]).stem in ('podcut','creator-flow') else 'creator-flow',description='Creator Flow: podcasts, Shorts, Reels and archive tools. Start with START_HERE.md.')
     ap.add_argument('--version',action='version',version=__version__)
     sub=ap.add_subparsers(dest='command',required=True)
     sub.add_parser('doctor')
+    from .archive import COMMANDS
+    q=sub.add_parser('archive',help='Bundled YouTube archive tools (optional Node/yt-dlp).')
+    q.add_argument('tool',choices=COMMANDS)
+    q.add_argument('args',nargs=argparse.REMAINDER)
     q=sub.add_parser('init');q.add_argument('folder')
     for name in ['questions','status','sync','colors','audio','xml','render','validate']:
         q=sub.add_parser(name);q.add_argument('project')
@@ -41,6 +45,9 @@ def parser():
     return ap
 
 def execute(a):
+    if a.command=='archive':
+        from .archive import run
+        raise SystemExit(run(a.tool,a.args))
     if a.command.startswith('clips-'):
         from . import clips
         if a.command=='clips-init':return str(clips.init(a.video,a.transcript,a.folder,a.count,a.min_seconds,a.max_seconds,a.note))
@@ -114,5 +121,5 @@ def main():
         result=execute(a)
         if result is not None:print(json.dumps(result,ensure_ascii=False,indent=2))
     except (ValueError,FileNotFoundError,KeyError,StopIteration,RuntimeError) as e:
-        print(f'Podcut: {e}',file=sys.stderr)
+        print(f'Creator Flow: {e}',file=sys.stderr)
         raise SystemExit(2)

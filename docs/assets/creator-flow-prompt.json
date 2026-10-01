@@ -1,0 +1,6 @@
+{
+  "tool": "built-in image_gen",
+  "reference": "podcut-logo.png",
+  "output": "creator-flow-logo.png",
+  "prompt": "Use case: text-localization / logo-brand. Edit the supplied existing Podcut Flow logo into the new brand. Preserve the teal sliced microphone symbol and clean navy visual identity. Replace the main wordmark with exactly \"Creator Flow\". Add a smaller, highly legible line beneath the wordmark with exactly \"Podcasts, Shorts & Reels\". Professional minimal horizontal logo lockup, generous balanced margins, crisp flat graphics, solid very light ivory background (not transparent), dark navy typography. No shadows, no mockup, no other words, no watermarks. Wide 3:1 composition. Intended as the GitHub README header of the unified podcast and clips workflow. The brand text may be rendered in this documentation asset; it is never used as a font or subtitles inside any episode video."
+}

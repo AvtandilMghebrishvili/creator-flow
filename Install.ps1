@@ -3,6 +3,7 @@ param(
     [switch]$Check,
     [switch]$WithoutTranscription,
     [switch]$WithWhisper,
+    [switch]$WithArchive,
     [switch]$Premiere
 )
 $ErrorActionPreference = 'Stop'
@@ -51,6 +52,7 @@ $podcutArgs = @((Join-Path $PSScriptRoot 'scripts\install.py'))
 if ($Check) { $podcutArgs += '--check' }
 if ($WithoutTranscription) { $podcutArgs += '--without-transcription' }
 if ($WithWhisper) { $podcutArgs += '--with-whisper' }
+if ($WithArchive) { $podcutArgs += '--with-archive' }
 if ($Premiere) { $podcutArgs += '--premiere' }
 & $podcutPython @podcutArgs
 exit $LASTEXITCODE

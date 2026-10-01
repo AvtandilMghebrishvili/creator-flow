@@ -4,3 +4,6 @@ recursive-include examples *.md *.json
 recursive-include .agents *.md *.yaml
 recursive-include .claude *.md
 recursive-include scripts *.py
+include docs/archive/LICENSE
+recursive-include src/podcut/youtube *.js *.json
+recursive-include tests *.mjs

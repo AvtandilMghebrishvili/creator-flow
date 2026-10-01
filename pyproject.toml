@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "podcut-flow"
-version = "0.1.0"
-description = "A local, agent-guided podcast editing workflow for Codex and Claude Code"
+version = "0.2.0"
+description = "Creator Flow: local podcasts, Shorts, Reels and YouTube archive tools for Codex and Claude"
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
@@ -14,12 +14,17 @@ authors = [{name = "TECHcrush / Avtandil Mghebrishvili"}]
 dependencies = ["numpy>=1.24,<3", "scipy>=1.10,<2", "soundfile>=0.12,<1", "Pillow>=10,<13", "fonttools>=4.50,<5"]
 
 [project.optional-dependencies]
+archive = ["yt-dlp[default]>=2025.1"]
 transcribe = ["sherpa-onnx>=1.13.8,<2", "huggingface-hub>=0.24,<2"]
 whisper = ["faster-whisper>=1.1,<2"]
 dev = ["pytest>=8,<10", "build>=1,<2", "PyYAML>=6,<7"]
 
 [project.scripts]
+creator-flow = "podcut.cli:main"
 podcut = "podcut.cli:main"
+
+[tool.setuptools.package-data]
+podcut = ["youtube/*.js", "youtube/*.json", "youtube/lib/*.js"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

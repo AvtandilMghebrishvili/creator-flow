@@ -91,10 +91,12 @@ def environment_python(root=ROOT):
     return root / '.venv' / ('Scripts/python.exe' if os.name == 'nt' else 'bin/python')
 
 
-def check_modules(python, transcribe, with_whisper=False):
+def check_modules(python, transcribe, with_whisper=False, with_archive=False):
     names = MODULES + (['sherpa_onnx', 'huggingface_hub'] if transcribe else [])
     if with_whisper:
         names.append('faster_whisper')
+    if with_archive:
+        names.extend(['yt_dlp', 'yt_dlp_ejs'])
     if not python.is_file():
         return names
     code = '''import importlib,json,sys
@@ -112,50 +114,96 @@ print(json.dumps(missing))
     return json.loads(result.stdout.strip().splitlines()[-1])
 
 
-def ensure_python_dependencies(check=False, transcribe=True, root=ROOT, with_whisper=False):
+def ensure_python_dependencies(check=False, transcribe=True, root=ROOT, with_whisper=False, with_archive=False):
     python = environment_python(root)
-    missing = check_modules(python, transcribe, with_whisper)
+    missing = check_modules(python, transcribe, with_whisper, **({'with_archive': True} if with_archive else {}))
     marker = root / '.venv' / 'podcut-install.json'
     signature = hashlib.sha256((root / 'pyproject.toml').read_bytes()).hexdigest()
     saved = json.loads(marker.read_text(encoding='utf-8')) if marker.exists() else {}
     configured = saved.get('project_hash') == signature and (not transcribe or saved.get('transcription'))
     configured = configured and (not with_whisper or saved.get('whisper'))
+    configured = configured and (not with_archive or saved.get('archive'))
     if check:
         return {'python': str(python), 'missing_modules': missing, 'installer_configuration_current': bool(configured)}
     if not python.is_file():
         run([sys.executable, '-m', 'venv', root / '.venv'])
     if missing or not configured:
         # No --upgrade/--force-reinstall: pip reuses satisfying installed dependencies.
-        extras = (['transcribe'] if transcribe else []) + (['whisper'] if with_whisper else [])
+        extras = (['transcribe'] if transcribe else []) + (['whisper'] if with_whisper else []) + (['archive'] if with_archive else [])
         target = str(root) + ('[' + ','.join(extras) + ']' if extras else '')
         run([python, '-m', 'pip', 'install', '-e', target])
         run([python, '-m', 'pip', 'check'])
-        missing = check_modules(python, transcribe, with_whisper)
+        missing = check_modules(python, transcribe, with_whisper, **({'with_archive': True} if with_archive else {}))
         if missing:
             raise RuntimeError('Installed modules still cannot load: ' + ', '.join(missing))
         marker.write_text(json.dumps({'project_hash': signature,
                                      'transcription': transcribe or bool(saved.get('transcription')),
-                                     'whisper': with_whisper or bool(saved.get('whisper'))}), encoding='utf-8')
+                                     'whisper': with_whisper or bool(saved.get('whisper')),
+                                     'archive': with_archive or bool(saved.get('archive'))}), encoding='utf-8')
     return {'python': str(python), 'missing_modules': [], 'installer_configuration_current': True}
 
 
+def usable_node():
+    node = os.environ.get('CREATOR_FLOW_NODE') or shutil.which('node')
+    if not node:
+        return None
+    try:
+        result = subprocess.run([node, '--version'], capture_output=True, text=True, timeout=20)
+        return node if result.returncode == 0 and int(result.stdout.strip().lstrip('v').split('.')[0]) >= 22 else None
+    except (OSError, ValueError, subprocess.TimeoutExpired):
+        return None
+
+
+def ensure_node(check=False):
+    found = usable_node()
+    if found or check:
+        return found
+    if os.environ.get('CREATOR_FLOW_NODE') or shutil.which('node'):
+        raise RuntimeError('Existing Node is unusable or older than 22. Diagnose it or select a supported '
+                           'Node with CREATOR_FLOW_NODE; it was not overwritten. See docs/ARCHIVE.md.')
+    system = platform.system()
+    if system == 'Windows' and shutil.which('winget'):
+        command = [shutil.which('winget'), 'install', '--id', 'OpenJS.NodeJS.LTS', '--exact',
+                   '--source', 'winget', '--no-upgrade', '--accept-source-agreements', '--accept-package-agreements']
+    elif system == 'Darwin' and shutil.which('brew'):
+        command = [shutil.which('brew'), 'install', 'node']
+    elif system == 'Linux':
+        prefix = [] if os.geteuid() == 0 else [shutil.which('sudo')] if shutil.which('sudo') else None
+        manager = shutil.which('apt-get') or shutil.which('dnf')
+        if prefix is None or not manager:
+            raise RuntimeError('Install Node 22+ using the supported vendor route in docs/ARCHIVE.md.')
+        command = prefix + [manager, 'install', '-y', 'nodejs']
+    else:
+        raise RuntimeError('Install Node 22+ using the supported vendor route in docs/ARCHIVE.md.')
+    run(command)
+    refresh_windows_path()
+    found = usable_node()
+    if not found:
+        raise RuntimeError('Node installation did not yield a usable Node 22+. See docs/ARCHIVE.md; setup is incomplete.')
+    return found
+
+
 def main(argv=None):
-    parser = argparse.ArgumentParser(description='Install missing Podcut dependencies in .venv; reuse working tools.')
+    parser = argparse.ArgumentParser(description='Install missing Creator Flow dependencies in .venv; reuse working tools.')
     parser.add_argument('--check', action='store_true', help='Read-only check; do not install or write files.')
     parser.add_argument('--without-transcription', action='store_true', help='Omit the local ASR library when not needed.')
     parser.add_argument('--with-whisper', action='store_true', help='Also install optional Whisper comparison support.')
     parser.add_argument('--premiere', action='store_true', help='Also report the required agent-managed Premiere/MCP step.')
+    parser.add_argument('--with-archive', action='store_true', help='Install/reuse Node 22+ and yt-dlp for the bundled YouTube archive tools.')
     args = parser.parse_args(argv)
     if args.without_transcription and args.with_whisper:
         parser.error('--with-whisper cannot be combined with --without-transcription')
     if sys.version_info < (3, 10) or sys.maxsize <= 2**32:
         raise RuntimeError('Use 64-bit Python 3.10+; Windows users can run Install.ps1 to locate/install it.')
     tools = ensure_media(args.check)
-    packages = ensure_python_dependencies(args.check, not args.without_transcription, with_whisper=args.with_whisper)
-    ready = all(tools.values()) and not packages['missing_modules']
+    packages = ensure_python_dependencies(args.check, not args.without_transcription, with_whisper=args.with_whisper, with_archive=args.with_archive)
+    archive_node = ensure_node(args.check) if args.with_archive else None
+    ready = all(tools.values()) and not packages['missing_modules'] and (not args.with_archive or bool(archive_node))
     report = {'local_tools_ready': ready, 'media_tools': tools, 'environment': packages,
               'speech_model': 'Meta is the default transcription engine; Whisper is optional via --with-whisper. '
                               'Reuse cached weights; run a Meta sample with --allow-download before claiming the model is ready.'}
+    if args.with_archive:
+        report['archive'] = {'node': archive_node, 'yt_dlp_installed': 'yt_dlp' not in packages['missing_modules']}
     if args.premiere:
         report['premiere'] = {'connection_verified': False,
                               'next': 'Agent: follow docs/PREMIERE.md. Reuse a working connection; otherwise install '
@@ -169,5 +217,5 @@ if __name__ == '__main__':
     try:
         raise SystemExit(main())
     except (RuntimeError, OSError, subprocess.SubprocessError, ValueError) as exc:
-        print('Podcut setup: ' + str(exc), file=sys.stderr)
+        print('Creator Flow setup: ' + str(exc), file=sys.stderr)
         raise SystemExit(2)

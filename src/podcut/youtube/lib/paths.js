@@ -6,7 +6,7 @@ import fs from 'node:fs';
  * Defaults to the current working directory so the skill can be dropped into any
  * project; override with YTC_ROOT when running from elsewhere.
  */
-export const ROOT = process.env.YTC_ROOT || process.cwd();
+export const ROOT = process.env.CREATOR_FLOW_ROOT || process.env.YTC_ROOT || process.cwd();
 
 const exe = (n) => (process.platform === 'win32' ? `${n}.exe` : n);
 
@@ -17,9 +17,9 @@ function tool(relative, name) {
 }
 
 export const TOOLS = {
-  ffmpeg:  tool(path.join('tools', 'ffmpeg', 'bin', exe('ffmpeg')), 'ffmpeg'),
-  ffprobe: tool(path.join('tools', 'ffmpeg', 'bin', exe('ffprobe')), 'ffprobe'),
-  ytdlp:   tool(path.join('tools', exe('yt-dlp')), 'yt-dlp'),
+  ffmpeg:  process.env.PODCUT_FFMPEG || tool(path.join('tools', 'ffmpeg', 'bin', exe('ffmpeg')), 'ffmpeg'),
+  ffprobe: process.env.PODCUT_FFPROBE || tool(path.join('tools', 'ffmpeg', 'bin', exe('ffprobe')), 'ffprobe'),
+  ytdlp:   process.env.CREATOR_FLOW_YTDLP || tool(path.join('tools', exe('yt-dlp')), 'yt-dlp'),
   whisper: path.join(ROOT, 'tools', 'whisper', 'Release', exe('whisper-cli')),
   model:   path.join(ROOT, 'tools', 'whisper', 'models', 'ggml-large-v3.bin'),
 };

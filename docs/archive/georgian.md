@@ -5,7 +5,7 @@ places it breaks for Georgian, and the workarounds.
 
 ## Speech-to-text
 
-**Current shared workflow:** new local transcription defaults to Meta Omnilingual ASR through [Podcut Flow](podcut-flow.md). Review the full timed transcript before assembly. The table/comparison below records an earlier sample, not a general model ranking; Whisper is now opt-in.
+**Current shared workflow:** new local transcription defaults to Meta Omnilingual ASR through [Creator Flow](podcut-flow.md). Review the full timed transcript before assembly. The table/comparison below records an earlier sample, not a general model ranking; Whisper is now opt-in.
 
 | Source | Georgian | Quality | Cost |
 |---|---|---|---|

@@ -1,0 +1,6 @@
+{
+  "name": "creator-flow-archive",
+  "private": true,
+  "type": "module",
+  "engines": {"node": ">=22"}
+}

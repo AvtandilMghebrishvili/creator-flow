@@ -20,7 +20,7 @@ const USAGE = `Usage:
   node scripts/fetch-transcripts.js --video <videoId> [--langs ...]`;
 
 const ytdlp = (args) =>
-  execFileSync(TOOLS.ytdlp, args, {
+  execFileSync(TOOLS.ytdlp, ['--js-runtimes', `node:${process.execPath}`, ...args], {
     encoding: 'utf8', maxBuffer: 256 * 1024 * 1024, stdio: ['ignore', 'pipe', 'ignore'],
   });
 

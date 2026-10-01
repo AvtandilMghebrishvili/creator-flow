@@ -12,7 +12,7 @@ After cloning or downloading/extracting this repository, Windows users/agents ca
 .\Install.ps1
 ```
 
-It locates a usable 64-bit Python 3.10+ or installs Python 3.12 through WinGet, verifies FFmpeg/ffprobe, installs them if both are missing, creates/reuses `.venv`, and installs Podcut plus the local transcription library. It uses the registered `Python.Python.3.12` and `Gyan.FFmpeg` packages, with exact IDs and no automatic upgrade of working system tools. See Microsoft's [WinGet install options](https://learn.microsoft.com/en-us/windows/package-manager/winget/install). It never changes PowerShell's persistent execution policy. If script execution is restricted, the agent can inspect the script and use the equivalent individual commands below; do not weaken the machine's policy.
+It locates a usable 64-bit Python 3.10+ or installs Python 3.12 through WinGet, verifies FFmpeg/ffprobe, installs them if both are missing, creates/reuses `.venv`, and installs Creator Flow plus the local transcription library. It uses the registered `Python.Python.3.12` and `Gyan.FFmpeg` packages, with exact IDs and no automatic upgrade of working system tools. See Microsoft's [WinGet install options](https://learn.microsoft.com/en-us/windows/package-manager/winget/install). It never changes PowerShell's persistent execution policy. If script execution is restricted, the agent can inspect the script and use the equivalent individual commands below; do not weaken the machine's policy.
 
 On macOS/Linux with a usable Python:
 
@@ -28,6 +28,7 @@ Options:
 | --- | --- | --- |
 | `-Check` | `--check` | Inspect only; no installs or file writes |
 | `-WithoutTranscription` | `--without-transcription` | Skip the ASR library only when it is not needed |
+| `-WithArchive` | `--with-archive` | Add bundled YouTube archive dependencies: Node 22+ and yt-dlp; no second repository |
 | `-WithWhisper` | `--with-whisper` | Also install optional Whisper support for comparison or explicit Whisper-only use |
 | `-Premiere` | `--premiere` | Also report the required agent-managed Premiere connection step |
 
@@ -42,8 +43,8 @@ Requirements: Python **3.10+**, FFmpeg and ffprobe on PATH, adequate free disk s
 On Windows, install those dependencies, reopen your terminal and check `python --version`, `ffmpeg -version`, `ffprobe -version`. If Python is launched with `py`, substitute `py` for the initial `python` command. No PowerShell execution-policy changes are needed:
 
 ```powershell
-git clone https://github.com/AvtandilMghebrishvili/podcut-flow.git
-cd podcut-flow
+git clone https://github.com/AvtandilMghebrishvili/creator-flow.git
+cd creator-flow
 python -m venv .venv
 .\.venv\Scripts\python -m pip install -e .
 .\.venv\Scripts\podcut doctor
@@ -52,14 +53,14 @@ python -m venv .venv
 On macOS/Linux, install FFmpeg with your normal package manager, then:
 
 ```sh
-git clone https://github.com/AvtandilMghebrishvili/podcut-flow.git
-cd podcut-flow
+git clone https://github.com/AvtandilMghebrishvili/creator-flow.git
+cd creator-flow
 python3 -m venv .venv
 .venv/bin/python -m pip install -e .
 .venv/bin/podcut doctor
 ```
 
-In the remaining documentation, `podcut` means the executable in this environment. You can activate the environment, or use the full path above. `python -m podcut` is equivalent. `PODCUT_FFMPEG` and `PODCUT_FFPROBE` may point to specific executables when PATH is unsuitable.
+The preferred command is `creator-flow`; the examples using `podcut` are equivalent compatibility commands in the same environment. The Python distribution remains named `podcut-flow` for existing installations. For YouTube archives see [ARCHIVE.md](ARCHIVE.md) and run the same installer with `-WithArchive` / `--with-archive`. In the remaining documentation, `podcut` means the executable in this environment. You can activate the environment, or use the full path above. `python -m podcut` is equivalent. `PODCUT_FFMPEG` and `PODCUT_FFPROBE` may point to specific executables when PATH is unsuitable.
 
 Run `podcut init "ABSOLUTE_EPISODE_FOLDER"` once. This creates `.podcut/project.json` beside the source media; it does not move them. Subsequent work resumes that file. Do not put media inside the repository. Read `inventory_errors.json`, including unsupported RAW files, before continuing.
 
@@ -81,7 +82,7 @@ Inspect/listen to the sample before a full run without `--start`/`--seconds`. Sa
 
 ## Agent discovery
 
-The repository supplies `.agents/skills/podcut-flow/SKILL.md` for [Codex skill discovery](https://learn.chatgpt.com/docs/build-skills) and `.claude/skills/podcut-flow/SKILL.md` for [Claude Code skills](https://code.claude.com/docs/en/skills). Work from the repository or explicitly instruct the agent to read `START_HERE.md`. Keep the whole repository if installing the skill elsewhere: its relative guide links need the companion files. `AGENTS.md` and `CLAUDE.md` route episode work and repository maintenance separately.
+The repository supplies `.agents/skills/creator-flow/SKILL.md` for [Codex skill discovery](https://learn.chatgpt.com/docs/build-skills) and `.claude/skills/creator-flow/SKILL.md` for [Claude Code skills](https://code.claude.com/docs/en/skills). Work from the repository or explicitly instruct the agent to read `START_HERE.md`. Keep the whole repository if installing the skill elsewhere: its relative guide links need the companion files. `AGENTS.md` and `CLAUDE.md` route episode work and repository maintenance separately.
 
 For Premiere use the [dedicated guide](PREMIERE.md). The agent installs a missing integration when automated native assembly is selected; XML import is the simpler connection-free path. No Premiere credentials, bridge secrets, API keys or user-specific MCP configuration ship with this repository.
 

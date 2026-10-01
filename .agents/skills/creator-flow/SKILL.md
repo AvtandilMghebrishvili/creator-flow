@@ -1,9 +1,9 @@
 ---
-name: podcut-flow
-description: Guide local podcast and clip editing in Codex or Claude with Meta Omnilingual ASR, synchronization, colors, full transcript review, original-font captions and spoken opening teasers. Use for episode/Shorts preparation, Premiere assembly or requested rendering from local recordings. Handles source mapping and shared-audio ambiguity. Do not use for unrelated coding or generated presenter videos.
+name: creator-flow
+description: Guide local podcast editing, reviewed Shorts and Reels, or YouTube archive research with Meta transcription, original-font captions, spoken teasers and Premiere or rendered delivery. Use for real-recording production and archive/channel analysis, not unrelated coding or generated presenter videos.
 ---
 
-# Podcut Flow
+# Creator Flow
 
 Read [START_HERE.md](../../../START_HERE.md) in this repository and follow it as the canonical workflow. If this skill was copied separately, locate the repository; do not assume these relative resources still exist.
 
@@ -18,3 +18,5 @@ Follow [clip and subtitle review](../../../docs/CLIPS.md): ask whether the user 
 Own dependency setup: inspect/reuse existing tools, run the repository installer for missing requirements, and install/configure a missing Premiere MCP/plugin when automated native assembly is selected. Verify imports, executables and the app connection. Ask for user participation only at an actual interactive/permission/account step; ordinary dependency installs are part of setting up the requested workflow.
 
 Use [Premiere instructions](../../../docs/PREMIERE.md) for XML import or optional local MCP. XML alone is not a finished native project. Save/reopen/verify `.prproj`; never do a full render in Premiere-only mode. Deliver source and edited-clock transcripts. Describe actual verification and any remaining limitations honestly.
+
+For YouTube archive/channel research use [the bundled archive guide](../../../docs/ARCHIVE.md) and `creator-flow archive`. This code is already in the same repository; do not clone a second toolkit. Ask for the authorized archive source/workspace. New transcript generation still defaults to Meta, and all production review gates above apply. Use original archive metadata/hooks/strategy references only when relevant.

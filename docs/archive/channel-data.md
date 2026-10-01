@@ -3,7 +3,7 @@
 ## Measure before advising
 
 ```bash
-node scripts/channel-stats.js --channel "https://www.youtube.com/@Handle"
+creator-flow archive channel-stats --channel "https://www.youtube.com/@Handle"
 ```
 
 Pulls every Short and long-form video with view counts via `yt-dlp` — no API key, no

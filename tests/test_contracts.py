@@ -15,9 +15,9 @@ from podcut.transcript import transcribe
 def test_skill_metadata_and_links():
     root = Path(__file__).resolve().parents[1]
     for folder in ['.agents', '.claude']:
-        skill = root / folder / 'skills' / 'podcut-flow' / 'SKILL.md'
+        skill = root / folder / 'skills' / 'creator-flow' / 'SKILL.md'
         metadata = yaml.safe_load(skill.read_text(encoding='utf-8').split('---', 2)[1])
-        assert metadata['name'] == 'podcut-flow'
+        assert metadata['name'] == 'creator-flow'
         assert len(metadata['description']) < 1024
         assert (skill.parent / '../../../START_HERE.md').resolve().is_file()
 

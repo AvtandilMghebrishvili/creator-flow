@@ -90,6 +90,8 @@ def test_premiere_flag_does_not_claim_an_app_connection(tmp_path, monkeypatch, c
 
 def test_whisper_is_only_required_when_requested(tmp_path):
     python = tmp_path / 'missing-python'
+    assert 'yt_dlp' not in installer.check_modules(python, True)
+    assert 'yt_dlp' in installer.check_modules(python, True, with_archive=True)
     assert 'faster_whisper' not in installer.check_modules(python, True)
     assert 'faster_whisper' in installer.check_modules(python, True, with_whisper=True)
 
@@ -98,3 +100,23 @@ def test_conflicting_transcription_install_options_fail_before_install(monkeypat
     monkeypatch.setattr(installer, 'ensure_media', lambda *a: pytest.fail('Should reject before installation'))
     with pytest.raises(SystemExit):
         installer.main(['--without-transcription', '--with-whisper'])
+
+
+def test_archive_node_check_does_not_install(monkeypatch):
+    monkeypatch.setattr(installer, 'usable_node', lambda: None)
+    monkeypatch.setattr(installer, 'run', reject_run)
+    assert installer.ensure_node(check=True) is None
+
+
+def test_working_archive_node_is_reused(monkeypatch):
+    monkeypatch.setattr(installer, 'usable_node', lambda: '/runtime/node')
+    monkeypatch.setattr(installer, 'run', reject_run)
+    assert installer.ensure_node() == '/runtime/node'
+
+
+def test_incompatible_node_is_not_silently_overwritten(monkeypatch):
+    monkeypatch.setattr(installer, 'usable_node', lambda: None)
+    monkeypatch.setenv('CREATOR_FLOW_NODE', '/old/node')
+    monkeypatch.setattr(installer, 'run', reject_run)
+    with pytest.raises(RuntimeError, match='was not overwritten'):
+        installer.ensure_node()

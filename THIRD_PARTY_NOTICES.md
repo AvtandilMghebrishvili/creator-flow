@@ -1,8 +1,8 @@
 # Workflow attribution
 
-The local clip shortlist, blurred-background inset layout and subtitle-review workflow build on [YOUTUBETECHCRUSH](https://github.com/AvtandilMghebrishvili/YOUTUBETECHCRUSH), by TECHcrush / Avtandil Mghebrishvili. Its JavaScript workflow has been adapted into Podcut's local Python route with explicit scope/transcript/style approvals and real-footage opening teasers. The original archive-fetching/channel-statistics tools remain in their original repository. Podcut's Meta integration and review state are separate implementations.
+Creator Flow consolidates **Podcut Flow** and **YOUTUBETECHCRUSH**, both by TECHcrush / Avtandil Mghebrishvili. Both original Git histories are retained. The original YouTube archive/channel scripts are bundled in `src/podcut/youtube`; their MIT license is also kept at `docs/archive/LICENSE`. Local Python clip rendering adapts the shortlist/layout concepts with explicit transcript/style approval and repeated spoken teasers. The two renderers retain their documented differences.
 
-No model weights, original episode recordings, transcripts or fonts are distributed with this repository. Font files remain subject to their publisher's license. See the upstream repository's [MIT license](https://github.com/AvtandilMghebrishvili/YOUTUBETECHCRUSH/blob/main/LICENSE) and Podcut's LICENSE.
+No model weights, episode recordings, transcripts or original font files are distributed here. Fonts retain their publisher licenses. The underlying Meta runtime/model dependencies and other packages retain their respective licenses; see docs/TRANSCRIPTION.md.
 
 ## YOUTUBETECHCRUSH license
 

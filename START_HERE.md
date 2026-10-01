@@ -1,8 +1,12 @@
-# Agent entry point: Podcut Flow
+# Agent entry point: Creator Flow
 
 Use this workflow when the user wants an episode edited. When asked to maintain this repository's code, follow AGENTS.md instead of starting episode intake. Talk in the user's language. This is a guided local workflow, not a promise that a link alone controls their computer.
 
 For an installation-only request, complete docs/SETUP.md first; an episode folder is not required to install the tools. Start the source-folder and role questions when editing an episode begins.
+
+## Choose the source route
+
+This single repository includes local episode editing, reviewed Shorts/Reels and YouTube archive research. Use [docs/ARCHIVE.md](docs/ARCHIVE.md) for an existing archive/channel; ask for the authorized source and workspace instead of inventing a local raw-recording folder. Use the local intake below for camera/audio recordings. The count/duration, full transcript, real fonts and spoken-teaser confirmations apply to either production route. New transcription defaults to Meta. Do not install another archive repository or bypass the current review route with the legacy renderer.
 
 ## 1. Establish the episode and access
 

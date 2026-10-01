@@ -1,4 +1,0 @@
-interface:
-  display_name: "Podcut Flow"
-  short_description: "Edit podcasts with default Meta Omnilingual ASR"
-  default_prompt: "Use $podcut-flow to edit the podcast in my episode folder with the default Meta Omnilingual ASR transcription."

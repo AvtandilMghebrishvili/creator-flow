@@ -1,53 +1,62 @@
-# Podcut Flow
+# Creator Flow — Podcasts, Shorts & Reels
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/podcut-logo-dark.png">
-  <img src="assets/podcut-logo.png" alt="Podcut Flow cut-microphone logo" width="560">
-</picture>
+<img src="assets/creator-flow-logo.png" alt="Creator Flow — Podcasts, Shorts & Reels" width="760">
 
-A reusable local podcast-editing workflow for Codex and Claude Code, with **Meta Omnilingual ASR as the default local transcription engine**, synchronization, color previews, separate microphone stems, timestamped transcripts, Premiere exchange and optional rendering. Whisper is an optional comparison tool.
+**One local workflow for podcasts, Shorts/Reels and YouTube archives, guided by Codex or Claude Code.** Podcut Flow and YOUTUBETECHCRUSH are consolidated in this repository, with both Git histories preserved. There is one installer, one agent entry point and no second checkout to manage.
 
-## The workflow at a glance
-
-**Episode → reviewed clips:** agree count and duration first, then review/correct the entire timed Meta transcript before assembly. Choose captions on/off per video and original-file font/color/size variants. An approved spoken passage plays as an opening teaser and remains in the later conversation. The local review page exports corrections; the renderer requires current approval and preserves a clean video plus separate subtitles. See [clips and caption review](CLIPS.md). This adapts the local Shorts workflow from [YOUTUBETECHCRUSH](https://github.com/AvtandilMghebrishvili/YOUTUBETECHCRUSH).
-
-[![Six steps from episode files through default Meta Omnilingual ASR transcription to a Premiere project or rendered video](assets/podcut-workflow-guide.png)](assets/podcut-workflow-guide.png)
-
-1. Put one episode's video and audio in one folder.
-2. Give local Codex/Claude Code this repository link and the folder path.
-3. Let the agent install missing tools and confirm each camera/microphone's role.
-4. Verify synchronization and choose a look from your actual footage if grading is wanted.
-5. Review the edit and default Meta Omnilingual ASR transcript; recognition runs locally and independent microphones stay on separate tracks.
-6. Choose a native Premiere project for your review/render, or a rendered video.
-
-This is an illustrated example, not a product screenshot or real color preview. A wide camera and isolated microphones are optional; the agent adapts to the files you actually have. [Logo assets and generation notes](assets/README.md).
-
-## Local transcription with Meta
-
-Transcription defaults to **Meta Omnilingual ASR only**. Its timestamped draft is the baseline for retiming into the edit. The standard installer includes Meta dependencies; it does not require or download Whisper. Add optional Whisper support with `Install.ps1 -WithWhisper` or `python3 scripts/install.py --with-whisper`, then select `--engine both` for a comparison. Meta remains the baseline; drafts are never automatically merged.
-
-Meta uses the small CTC 300M INT8 model through native sherpa-onnx (about 365 MB), not the 7B/v2 system. This route works on Windows without WSL. There is no local per-minute ASR fee. See [comparison setup, exact models and review limits](TRANSCRIPTION.md).
-
-## Start an episode
+## Start
 
 Give a local agent this prompt:
 
 ```text
-Use https://github.com/AvtandilMghebrishvili/podcut-flow.
-Read START_HERE.md and its podcut-flow skill. Edit my podcast.
-Use the default Meta Omnilingual ASR for transcription.
+Use https://github.com/AvtandilMghebrishvili/creator-flow.
+Read START_HERE.md and the creator-flow skill.
 Episode folder: /absolute/path/to/episode
-Ask only for information I have not already provided.
+I want the episode, Shorts/Reels, or both. Ask me about count and duration.
+Use Meta Omnilingual ASR by default and install missing tools.
+Show the complete timed transcript for review before assembly.
+Reuse answers I already gave you.
 ```
 
-If the path is missing, the agent asks for it first. Place all episode video and audio in that folder, optionally in subfolders. A browser chat cannot read a local drive from the GitHub link alone.
+Put one episode's recordings in one folder, optionally with subfolders. If absent, the agent asks for the absolute path. For archive work give the chosen video/channel and a local workspace instead. A browser chat cannot read your drive merely from a GitHub link; use a local agent or accessible execution environment.
 
-Dependency installation is included in the workflow. The agent reuses working tools and installs missing Python/FFmpeg/project/transcription requirements, using `Install.ps1` on Windows or `scripts/install.py` where Python is available. For requested Premiere automation it also installs/configures a missing MCP/plugin and verifies the connection. Adobe licensing/login, OS prompts or interactive plugin loading may still require the user. See [setup](SETUP.md) for the exact installer scope.
+## The shared workflow
 
-The agent asks which files are guest/host/wide cameras, which microphones or recorder channels belong to whom, whether colors need work, what language is spoken, and whether to deliver a render or a Premiere project. For one camera and one mix, it asks left/right seating and speaker identities in timestamped samples, and explains that clean independent voice isolation is not guaranteed.
+1. Identify files, cameras and microphones; install missing dependencies. With one camera/shared mix, ask left/right seating and timed speaker examples. Do not promise clean independent voice separation.
+2. Ask whether to produce the full episode, clips or both. Propose counts and durations as questions; wait for the choice. Teaser time counts toward the total.
+3. Verify synchronization and drift. If grading is wanted, offer looks from actual source frames and honor the selected version. Preserve independent external microphone lanes.
+4. Generate new transcripts with **Meta Omnilingual ASR**, locally. Reuse existing reviewed transcripts; archive captions are an optional reviewed source. Show the **entire transcript with timecodes**, accept corrections and confirm the current version before assembly.
+5. Choose captions on/off per video and real publisher/installed/user-supplied TTF/OTF fonts, color and size. Verify Georgian/English glyph coverage. Never use generated lettering as video subtitles.
+6. Prepend the approved **real spoken passage** as an opening teaser, retaining its original later occurrence. Confirm text, cuts, hook and applicable style; changes invalidate approval.
+7. Deliver clean video, optional captioned video and separate editable subtitles, or a saved/reopened/verified Premiere project. Premiere-only mode does not render the full episode. Publishing requires a separate explicit request.
 
-If color is requested, it presents Natural, Warm and Contrast alternatives from actual episode frames, then uses the user's choice. It verifies sync across the recording, preserves separate microphones on separate lanes, and exports both original-clock and edited-clock TXT, SRT, VTT and JSON transcripts. Camera scratch audio is excluded from the final sequence when external recordings are available.
+The [root README diagram](../README.md#ფლოუ-ვიზუალურად) shows this flow. Read [START_HERE.md](../START_HERE.md) for agent intake and [CLIPS.md](CLIPS.md) for the local review page.
 
-Premiere delivery uses original-media XML plus stems and LUTs, followed by native import, color application, save and reopen verification. **XML is not a completed `.prproj`.** Direct app automation needs an installed working connection; a simple manual-import path is included. Premiere-only mode does not render the full video.
+## Install once
 
-Start with [local setup](SETUP.md), then [the agent playbook](../START_HERE.md). The [command guide](WORKFLOW.md), [Premiere guide](PREMIERE.md) and [limitations](LIMITATIONS.md) describe supported behavior and what still requires review. This is an agent-guided toolkit, not an unattended editor for arbitrary footage. Real episode media and private machine settings are not included. MIT licensed.
+```powershell
+git clone https://github.com/AvtandilMghebrishvili/creator-flow.git
+cd creator-flow
+.\Install.ps1 -WithArchive
+.\.venv\Scripts\creator-flow doctor
+.\.venv\Scripts\creator-flow archive doctor
+```
+
+macOS/Linux: `python3 scripts/install.py --with-archive`. Omit the archive flag for local episode/clip work. The installer reuses working tools and sets up Python/FFmpeg/Meta in `.venv`; the optional archive route adds Node 22+ and yt-dlp. No npm installation is needed. Missing Premiere automation components are set up by the agent following [PREMIERE.md](PREMIERE.md). Adobe licensing/login and required interactive steps may still need the user.
+
+Meta is the small **CTC 300M INT8 ONNX** model, about 365 MB, not the 7B/v2 system. Its weights download for the first sample. Whisper and dual comparison are opt-in. See [TRANSCRIPTION.md](TRANSCRIPTION.md) for exact models, licenses and approximate word timing limits.
+
+## Tools and compatibility
+
+| Route | Guide |
+| --- | --- |
+| Local cameras, sync, color, independent audio and editing | [WORKFLOW.md](WORKFLOW.md) |
+| Reviewed Shorts/Reels, spoken teaser, original-font captions | [CLIPS.md](CLIPS.md) |
+| Bundled archive fetching, channel summaries and candidates | [ARCHIVE.md](ARCHIVE.md) |
+| Native Premiere delivery or exchange package | [PREMIERE.md](PREMIERE.md) |
+
+`creator-flow` is the main command. Existing `podcut` commands, the Python distribution/module name and private `.podcut/` project state remain compatible. Existing checkout paths need not change. Archive code ships inside the same wheel and is tested with the Python code on Windows/Linux. Legacy karaoke rendering remains explicitly separate from the current approval-aware clip renderer.
+
+The current clip renderer needs an **already exported local video and complete transcript matching its clock**. Raw archive `{t,ms}` JSON is not a final-clock transcript. In Premiere-only work use the user's export or assemble/verify editable clip sequences in Premiere; do not force a full episode render. XML is an exchange package, not a completed native `.prproj` until imported, saved and verified. Burned-in captions cannot be toggled off inside that MP4; preserve clean output and editable subtitles.
+
+This is an agent-guided toolkit, with human review of text, sync, fonts and edit decisions. See [SETUP.md](SETUP.md), [LIMITATIONS.md](LIMITATIONS.md), [MIT license](../LICENSE) and [attribution](../THIRD_PARTY_NOTICES.md). No private recordings, transcripts, credentials, fonts or model weights are included in the repository.

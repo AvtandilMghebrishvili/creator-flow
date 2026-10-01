@@ -52,3 +52,11 @@ localAuth.json
 *.zip
 .DS_Store
 Thumbs.db
+
+# Private archive inputs, downloads, fonts and portable tools
+/data/
+/tools/
+/assets/fonts/
+node_modules/
+*.ttf
+*.otf
