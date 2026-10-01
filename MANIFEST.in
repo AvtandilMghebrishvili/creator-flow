@@ -7,3 +7,4 @@ recursive-include scripts *.py
 include docs/archive/LICENSE
 recursive-include src/podcut/youtube *.js *.json
 recursive-include tests *.mjs
+include docs/social/facebook-update.ka.txt

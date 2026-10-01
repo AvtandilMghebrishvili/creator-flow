@@ -129,6 +129,41 @@ Example hook: source `00:12:10–00:12:15` becomes the first five seconds, follo
 
 Choose **captions on/off per video**. Real-font options include publisher Noto Sans Georgian, installed/licensed Sylfaen or Arial, or your own TTF/OTF. The agent checks actual glyph coverage and license conditions, then previews family, size, color and outline. No generated lettering is used as a caption font. [Fonts and the review page](CLIPS.md).
 
+
+<a id="caption-style"></a>
+
+### Caption styling — customize once, apply consistently
+
+![Illustrative caption settings: original font, size, text color, outline and White / Yellow / Mint presets](assets/caption-style-studio.png)
+
+*This generated documentation image shows a fictional host, not a product screenshot. Your actual `review.html` previews your text using the selected original font. Generated lettering in this illustration is never used as a video font.*
+
+| Your choice | How it works |
+| --- | --- |
+| Font family | The agent adds an original static TTF/OTF file, then you select it from the list. Georgian text requires verified Georgian glyph coverage. |
+| Font style | Regular or Bold means choosing the corresponding **real font file**. There is no separate synthetic bold/italic switch in the current panel. |
+| Size | 24–110 in the review panel. Preview the change, then check readability in the actual rendered video. |
+| Text color | Start with White, Yellow or Mint, or choose a custom color using the color picker. |
+| Outline | Choose its color independently and set width from 0–10; 0 removes the outline. |
+| Captions on/off | Set per clip. A clean copy is kept alongside each requested captioned version. |
+
+**Customization:** supply your original font file or its local path, then choose size and colors. The agent validates the family, file and glyph coverage. See [actual Georgian/English font options](CLIPS.md#original-fonts).
+
+**Automation:** select one shared style for the current review batch. After you approve the complete text, ranges, hooks and style, requested rendering applies those settings to every caption-enabled clip in that batch. Ask for separate batches if different clips need different styles. The review page does not start rendering itself; this is a batch setting, not a global saved-template library.
+
+Example chat request:
+
+```text
+Show White, Yellow and Mint caption options using real fonts for my language.
+Compare original Regular and Bold files if available.
+Use size 64, outline width 3 and outline color #111827 for the selected option.
+Preview my actual text and wait; this request is not final approval.
+After I approve, apply the style across this batch's caption-enabled clips.
+Keep clean copies and separate SRT/VTT/TXT files too.
+```
+
+Choose → preview → approve → assemble. Later changes require confirmation again. Use the clean copy to omit captions; burned-in lettering cannot be switched off inside the same MP4.
+
 Example approval:
 
 ```text

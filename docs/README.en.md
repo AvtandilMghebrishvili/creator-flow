@@ -43,6 +43,16 @@ Reuse answers I already gave you.
 
 Put one episode's recordings in one folder, optionally with subfolders. If absent, the agent asks for the absolute path. For archive work give the chosen video/channel and a local workspace instead. A browser chat cannot read your drive merely from a GitHub link; use a local agent or accessible execution environment.
 
+## Captions in your style
+
+[![Caption customization illustration: font, size, text color and outline](assets/caption-style-studio.png)](USER_GUIDE.en.md#caption-style)
+
+Choose an original Georgian/English font, size, text color and outline color/width. Start with **White / Yellow / Mint** or customize the settings. After approval, one shared style is applied across the current batch's caption-enabled clips; captions on/off remains a per-clip choice. [Customization and automation walkthrough](USER_GUIDE.en.md#caption-style).
+
+*This is an illustrative image; the actual review page previews your text using the original selected font.*
+
+[Georgian Facebook announcement and cover](social/facebook-update.ka.md) are ready to share.
+
 ## The shared workflow
 
 1. Identify files, cameras and microphones; install missing dependencies. With one camera/shared mix, ask left/right seating and timed speaker examples. Do not promise clean independent voice separation.

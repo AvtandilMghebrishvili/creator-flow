@@ -8,6 +8,8 @@ result = subprocess.run(['git', 'ls-files', '-z'], cwd=root, check=True, capture
 problems = []
 # These reviewed generated graphics are public documentation, not episode media.
 documentation_artwork = {
+    'docs/assets/caption-style-studio.png',
+    'docs/assets/creator-flow-facebook-update.png',
     'docs/assets/creator-flow-cards-ka.png',
     'docs/assets/creator-flow-cards-en.png',
     'docs/assets/creator-flow-logo.png',

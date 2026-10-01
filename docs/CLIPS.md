@@ -67,3 +67,13 @@ Use installed files or obtain static fonts from their publisher, retaining licen
 The existing installer adds `fontTools` for checking actual family names, character coverage and static font files. It does not globally install or bundle copyrighted fonts. A missing Georgian/English character fails rather than silently falling back to another face. Variable fonts are rejected in this renderer; request the publisher's static release. Rendered font/style choices require visual review. The local review HTML embeds the selected original font bytes for consistent preview; keep it and export font folders private, and do not distribute font files unless their license permits it.
 
 White, yellow and mint text/outline presets are starting choices, not an automatic selection. No AI-generated font assets are used.
+
+## Caption customization and batch application
+
+![Illustrative caption styling panel, with a fictional host](assets/caption-style-studio.png)
+
+This is generated documentation artwork, not a screenshot or a source of production font assets. The real `review.html` panel uses embedded original font files and exposes font selection, size (24–110), text color, outline color, outline width (0–10), and White/Yellow/Mint presets. To use a different weight, register the original static Bold/Regular file and select that face; there is no separate synthetic bold/italic toggle.
+
+The review's `style` object is **shared across its batch**. Every caption-enabled clip receives that style only when the current text, cuts, hooks and style have been approved and rendering was requested. Captions on/off remains per clip. For different styles, use separate reviewed batches. Color presets update text and outline colors; they do not select or install a font, change size, start an export, or publish a video. Corrections downloaded from the review page must be returned to the agent and imported before approval/rendering.
+
+There is no persistent global preset library. Keep the review JSON to retain its settings; any later style change invalidates its previous approval. Clean videos remain available to omit burned-in captions. Read the visual walkthrough in [ქართული](USER_GUIDE.ka.md#caption-style) or [English](USER_GUIDE.en.md#caption-style).

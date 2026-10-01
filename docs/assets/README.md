@@ -20,3 +20,15 @@ Their original generation/edit prompts are in [prompts.json](prompts.json). The 
 ## Bilingual visual cards
 
 [creator-flow-cards-ka.png](creator-flow-cards-ka.png) and [creator-flow-cards-en.png](creator-flow-cards-en.png) are browser renders of the authored [visual-guide.html](../visual-guide.html), not generated footage or product screenshots. They show three output routes, eight workflow stages and the repeated-teaser timeline. The HTML is the editable source, uses installed system fonts, works offline and provides a language/client/task prompt selector with a copy button. No user media is uploaded; GitHub links are ordinary outbound documentation links. Open the local HTML for interaction; GitHub itself displays HTML source.
+
+## Caption styling and update announcement
+
+| Asset | Use |
+| --- | --- |
+| [caption-style-studio.png](caption-style-studio.png) | 1536×1024 caption-style illustration with a fictional host, original-font selection, size, text/outline color, width, presets and approval sequence |
+| [creator-flow-facebook-update.png](creator-flow-facebook-update.png) | Square Georgian Facebook announcement: a podcast scene becomes vertical Shorts/Reels |
+| [caption-update-prompts.json](caption-update-prompts.json) | Exact prompts, brand reference and built-in image_gen provenance for both images |
+
+These AI-generated documentation/marketing images are illustrations, not screenshots, participant photos, testimonials or sources of original fonts. Production captions use real static TTF/OTF files. The on-image controls summarize supported choices; detailed behavior and batch limits are explained in the [Georgian](../USER_GUIDE.ka.md#caption-style) and [English](../USER_GUIDE.en.md#caption-style) guides. They contain no user recordings or original font files and are included under the repository's MIT license.
+
+The [Facebook package](../social/facebook-update.ka.md) includes the Georgian copy, downloadable cover and alt text. It has not been posted to a social account.
