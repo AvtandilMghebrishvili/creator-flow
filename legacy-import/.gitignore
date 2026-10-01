@@ -1,0 +1,17 @@
+# Never commit secrets
+.env
+.env.*
+!.env.example
+
+# Large binaries and working data belong to the project, not the skill
+tools/
+data/
+node_modules/
+*.mp4
+*.mkv
+*.webm
+*.wav
+*.mp3
+*.bin
+*.ttf
+*.otf
