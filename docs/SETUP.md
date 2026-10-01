@@ -80,6 +80,20 @@ podcut transcribe PROJECT --language ka --start 60 --seconds 40 --allow-download
 
 Inspect/listen to the sample before a full run without `--start`/`--seconds`. Save corrected names and uncertain passages; do not describe unchecked ASR as a verified transcript. A missing or unusable model is a disclosed remaining step, not permission to invent text.
 
+## Chat-first guide and skill registration
+
+For copyable installation and production prompts, see [the Georgian user guide](USER_GUIDE.ka.md) or [the English user guide](USER_GUIDE.en.md). Open `docs/visual-guide.html` from the local checkout for language/client/task selectors and a copy button. The cards are also embedded as PNGs in the READMEs.
+
+Dependency installation and personal skill discovery are separate. When the user wants invocation from chats outside this repository, run the registration helper with the environment Python:
+
+```powershell
+.\.venv\Scripts\python.exe scripts/register_skill.py --client codex
+```
+
+Use `--client claude` or `--client both` as appropriate; on macOS/Linux use `.venv/bin/python`. This writes a small `creator-flow/SKILL.md` pointing to the complete checkout, not a disconnected copy with broken relative links. It reuses an established location for this skill. New Codex registrations use `~/.agents/skills`; Claude uses `~/.claude/skills`. `--skills-dir` can override the destination for one client. No media, weights or client credentials are copied.
+
+`--check` is read-only. Repeated identical registration makes no changes. A differing existing file requires `--replace`, which saves its content beside it under a unique backup filename; inspect/preserve user customizations before replacing. Symlinked skill targets require inspection rather than automatic overwrite. Keep the checkout in place or reregister after moving it. Reopen/refresh the client if discovery does not update. See the user guide for chat invocation and official client documentation.
+
 ## Agent discovery
 
 The repository supplies `.agents/skills/creator-flow/SKILL.md` for [Codex skill discovery](https://learn.chatgpt.com/docs/build-skills) and `.claude/skills/creator-flow/SKILL.md` for [Claude Code skills](https://code.claude.com/docs/en/skills). Work from the repository or explicitly instruct the agent to read `START_HERE.md`. Keep the whole repository if installing the skill elsewhere: its relative guide links need the companion files. `AGENTS.md` and `CLAUDE.md` route episode work and repository maintenance separately.

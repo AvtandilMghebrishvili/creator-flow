@@ -15,3 +15,8 @@ These original Podcut Flow assets remain available for provenance and older link
 | [podcut-workflow-guide.png](podcut-workflow-guide.png) | Six-step episode illustration, including default local Meta ASR |
 
 Their original generation/edit prompts are in [prompts.json](prompts.json). The older illustrated source counts are examples, not required camera/microphone counts or real episode previews. These documentation assets contain no real recordings or participant photos and are included under the repository's MIT license. Generated documentation lettering is never used as a caption font inside videos; captions require original font files.
+
+
+## Bilingual visual cards
+
+[creator-flow-cards-ka.png](creator-flow-cards-ka.png) and [creator-flow-cards-en.png](creator-flow-cards-en.png) are browser renders of the authored [visual-guide.html](../visual-guide.html), not generated footage or product screenshots. They show three output routes, eight workflow stages and the repeated-teaser timeline. The HTML is the editable source, uses installed system fonts, works offline and provides a language/client/task prompt selector with a copy button. No user media is uploaded; GitHub links are ordinary outbound documentation links. Open the local HTML for interaction; GitHub itself displays HTML source.

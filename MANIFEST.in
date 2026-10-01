@@ -1,5 +1,5 @@
 include START_HERE.md AGENTS.md CLAUDE.md CONTRIBUTING.md Install.ps1 THIRD_PARTY_NOTICES.md
-recursive-include docs *.md *.png *.json
+recursive-include docs *.md *.png *.json *.html
 recursive-include examples *.md *.json
 recursive-include .agents *.md *.yaml
 recursive-include .claude *.md

@@ -4,6 +4,29 @@
 
 **One local workflow for podcasts, Shorts/Reels and YouTube archives, guided by Codex or Claude Code.** Podcut Flow and YOUTUBETECHCRUSH are consolidated in this repository, with both Git histories preserved. There is one installer, one agent entry point and no second checkout to manage.
 
+## Full walkthrough and visual cards
+
+**[Complete English guide](USER_GUIDE.en.md)** · **[ქართული გზამკვლევი](USER_GUIDE.ka.md)**
+
+Includes first-time chat installation, skill discovery, separate podcast/Shorts/Reels prompts, full transcript review, original-font captions, spoken teasers, Premiere delivery and troubleshooting.
+
+[![Creator Flow: three output formats and eight workflow cards](assets/creator-flow-cards-en.png)](USER_GUIDE.en.md)
+
+[Interactive bilingual guide with copyable prompts](visual-guide.html): open `docs/visual-guide.html` from the downloaded checkout in a browser. GitHub displays its source, not the interactive controls.
+
+**In chat:** Codex uses `$creator-flow`; Claude Code uses `/creator-flow`. Follow it with your task and source folder. These are chat markers; terminal commands use the `creator-flow` executable. [Examples and official sources](USER_GUIDE.en.md#2-invoke-the-skill).
+
+First-time installation prompt:
+
+```text
+Install https://github.com/AvtandilMghebrishvili/creator-flow on this computer.
+Read START_HERE.md and docs/SETUP.md; reuse an existing checkout.
+Install missing tools with Meta and archive support.
+Register the skill for this client with scripts/register_skill.py.
+Preserve my custom instructions and check both doctors.
+Do not process an episode yet. Explain how to invoke the skill.
+```
+
 ## Start
 
 Give a local agent this prompt:
@@ -38,6 +61,7 @@ The [root README diagram](../README.md#ფლოუ-ვიზუალურა�
 git clone https://github.com/AvtandilMghebrishvili/creator-flow.git
 cd creator-flow
 .\Install.ps1 -WithArchive
+.\.venv\Scripts\python.exe scripts/register_skill.py --client codex
 .\.venv\Scripts\creator-flow doctor
 .\.venv\Scripts\creator-flow archive doctor
 ```

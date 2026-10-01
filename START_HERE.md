@@ -4,6 +4,8 @@ Use this workflow when the user wants an episode edited. When asked to maintain 
 
 For an installation-only request, complete docs/SETUP.md first; an episode folder is not required to install the tools. Start the source-folder and role questions when editing an episode begins.
 
+For a user-facing walkthrough, offer [ქართული](docs/USER_GUIDE.ka.md) or [English](docs/USER_GUIDE.en.md). The visual HTML contains copyable setup/podcast/Shorts/Reels prompts. For personal skill registration use docs/SETUP.md; dependency installation alone does not register a skill for unrelated folders.
+
 ## Choose the source route
 
 This single repository includes local episode editing, reviewed Shorts/Reels and YouTube archive research. Use [docs/ARCHIVE.md](docs/ARCHIVE.md) for an existing archive/channel; ask for the authorized source and workspace instead of inventing a local raw-recording folder. Use the local intake below for camera/audio recordings. The count/duration, full transcript, real fonts and spoken-teaser confirmations apply to either production route. New transcription defaults to Meta. Do not install another archive repository or bypass the current review route with the legacy renderer.

@@ -10,6 +10,27 @@ Codex-სა და Claude Code-სთვის შექმნილი ად�
 
 [English](docs/README.en.md) · [აგენტისთვის / Start here](START_HERE.md) · [დაყენება](docs/SETUP.md) · [Shorts / Reels](docs/CLIPS.md) · [YouTube არქივი](docs/ARCHIVE.md) · [Premiere](docs/PREMIERE.md)
 
+## პირველად აქედან დაიწყე
+
+| ქართული | English |
+| --- | --- |
+| **[სრული გზამკვლევი](docs/USER_GUIDE.ka.md)** — დაყენება ჩათიდან, skill-ის გამოძახება, პოდკასტი, Shorts, Reels, ჩასწორება და შედეგები | **[Complete user guide](docs/USER_GUIDE.en.md)** — chat installation, skill invocation, podcasts, Shorts, Reels, review and delivery |
+
+**[ორენოვანი ვიზუალური გვერდი და მზა ტექსტების კოპირება](docs/visual-guide.html)** — ჩამოტვირთული checkout-იდან გახსენი `docs/visual-guide.html` ბრაუზერში. GitHub ფაილის გვერდი HTML-ის კოდს აჩვენებს; ინტერაქტიული ღილაკები ადგილობრივად გახსნისას მუშაობს.
+
+ჩათიდან პირველი დაყენებისთვის ჩასვი:
+
+```text
+დააყენე https://github.com/AvtandilMghebrishvili/creator-flow ამ კომპიუტერზე.
+წაიკითხე START_HERE.md და docs/SETUP.md; გამოიყენე არსებული checkout, თუ არის.
+დააყენე საჭირო ინსტრუმენტები Meta-სა და არქივის მხარდაჭერით.
+scripts/register_skill.py-ით ამ კლიენტისთვის skill დაარეგისტრირე.
+ჩემი არსებული ცვლილებები შეინარჩუნე; შეამოწმე ორივე doctor.
+ეპიზოდი ჯერ არ დაამუშაო. ბოლოს მითხარი როგორ გამოვიძახო.
+```
+
+**ჩათში გამოძახება:** Codex — `$creator-flow`; Claude Code — `/creator-flow`. შემდეგ მიუწერე დავალება და ფოლდერი. ეს ტერმინალის ბრძანებები არ არის. [სრული მაგალითები და ოფიციალური წყაროები](docs/USER_GUIDE.ka.md#2-როგორ-გამოიძახო-skill).
+
 ## როგორ დაიწყო
 
 გახსენი ადგილობრივ კომპიუტერზე მომუშავე **Codex ან Claude Code**, რომელსაც შენს ფაილებზე წვდომა აქვს, და ჩაუგდე:
@@ -28,6 +49,13 @@ Codex-სა და Claude Code-სთვის შექმნილი ად�
 
 ## ფლოუ ვიზუალურად
 
+[![პოდკასტი, Shorts და Reels: ვიზუალური ბარათები ქართულად](docs/assets/creator-flow-cards-ka.png)](docs/USER_GUIDE.ka.md)
+
+[English visual cards](docs/assets/creator-flow-cards-en.png) · [სრული ინსტრუქცია ქართულად](docs/USER_GUIDE.ka.md)
+
+<details>
+<summary>სქემის ტექსტური ვერსია / Editable diagram</summary>
+
 ```mermaid
 flowchart TD
     A[ეპიზოდის ვიდეოები და აუდიოები] --> C[Codex / Claude: წყაროები და საჭირო პროგრამები]
@@ -44,6 +72,8 @@ flowchart TD
     K --> L[Premiere პროექტი: შენ ამოწმებ და არენდერებ]
     K --> M[სუფთა ვიდეო + ცალკე სუბტიტრები + სურვილისამებრ ტექსტიანი ვიდეო]
 ```
+
+</details>
 
 უკვე გადამოწმებული ტრანსკრიპტი ხელახლა არ გადაიწერება მხოლოდ მოდელის შესაცვლელად. არქივის არსებული სუბტიტრებიც შეიძლება გამოვიყენოთ შემოწმების შემდეგ; **ახალი ტრანსკრიპციის ნაგულისხმევი მოდელი Meta-ა**.
 
@@ -71,6 +101,7 @@ flowchart TD
 git clone https://github.com/AvtandilMghebrishvili/creator-flow.git
 cd creator-flow
 .\Install.ps1 -WithArchive
+.\.venv\Scripts\python.exe scripts/register_skill.py --client codex
 .\.venv\Scripts\creator-flow doctor
 .\.venv\Scripts\creator-flow archive doctor
 ```
