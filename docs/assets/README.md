@@ -1,17 +1,17 @@
 # Creator Flow artwork
 
-Original documentation artwork created with the built-in **image_gen** tool. The microphone's diagonal gap represents an edit; the two bars echo synchronized tracks. The assets are included under this repository's MIT license.
+The current README uses [creator-flow-logo.png](creator-flow-logo.png): the teal sliced microphone, navy **Creator Flow** wordmark and **Podcasts, Shorts & Reels** subtitle on an ivory background. It was created with the built-in **image_gen** tool using the original logo as an edit reference. The exact edit prompt is saved in [creator-flow-prompt.json](creator-flow-prompt.json).
 
-| Asset | Purpose |
+The maintained full workflow diagram is in the [root README](../../README.md#ფლოუ-ვიზუალურად). It includes archive/local inputs, Meta, complete transcript review, caption and spoken-teaser choices, approval and delivery. The diagram remains editable text and renders on GitHub.
+
+## Historical artwork
+
+These original Podcut Flow assets remain available for provenance and older links; they are no longer selected by the current README:
+
+| Asset | Original purpose |
 | --- | --- |
-| [podcut-logo.png](podcut-logo.png) | Teal emblem and navy wordmark on a transparent background; for light surfaces |
-| [podcut-logo-dark.png](podcut-logo-dark.png) | Teal emblem and white wordmark on an opaque charcoal background; for dark README themes |
-| [podcut-workflow-guide.png](podcut-workflow-guide.png) | Six-step illustrated guide; step 05 identifies Meta Omnilingual ASR as the default local transcription engine |
+| [podcut-logo.png](podcut-logo.png) | Teal emblem and navy wordmark on transparent background |
+| [podcut-logo-dark.png](podcut-logo-dark.png) | Teal emblem and light wordmark on charcoal |
+| [podcut-workflow-guide.png](podcut-workflow-guide.png) | Six-step episode illustration, including default local Meta ASR |
 
-The README selects the logo for the reader's light/dark preference. Open the workflow image for a full-size view. Its illustrations depict an example with guest, host and wide footage plus two independent microphones; they are not required input counts, actual interface screenshots or real episode color previews. See the surrounding guide for shared-audio and single-camera cases.
-
-The exact generation prompts and subsequent edits are saved in [prompts.json](prompts.json). The workflow's English image labels have matching Georgian explanations in the main README, and all steps remain available as accessible text. These graphics contain no real episode recordings or participant photos.
-
-## Creator Flow rebrand
-
-`creator-flow-logo.png` is the unified README logo, made with the built-in image generation tool from the original sliced-microphone logo. The exact prompt is in `creator-flow-prompt.json`. The earlier `podcut-*` assets are retained as historical artwork; the maintained full workflow is the Mermaid diagram in the root README. Documentation lettering is never used as a caption font inside videos.
+Their original generation/edit prompts are in [prompts.json](prompts.json). The older illustrated source counts are examples, not required camera/microphone counts or real episode previews. These documentation assets contain no real recordings or participant photos and are included under the repository's MIT license. Generated documentation lettering is never used as a caption font inside videos; captions require original font files.
