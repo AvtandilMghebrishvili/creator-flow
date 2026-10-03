@@ -100,3 +100,7 @@ Meta is the small **CTC 300M INT8 ONNX** model, about 365 MB, not the 7B/v2 syst
 The current clip renderer needs an **already exported local video and complete transcript matching its clock**. Raw archive `{t,ms}` JSON is not a final-clock transcript. In Premiere-only work use the user's export or assemble/verify editable clip sequences in Premiere; do not force a full episode render. XML is an exchange package, not a completed native `.prproj` until imported, saved and verified. Burned-in captions cannot be toggled off inside that MP4; preserve clean output and editable subtitles.
 
 This is an agent-guided toolkit, with human review of text, sync, fonts and edit decisions. See [SETUP.md](SETUP.md), [LIMITATIONS.md](LIMITATIONS.md), [MIT license](../LICENSE) and [attribution](../THIRD_PARTY_NOTICES.md). No private recordings, transcripts, credentials, fonts or model weights are included in the repository.
+
+## Creator Flow for YouTube: Chrome / Edge extension
+
+An in-page panel for packaging checks, thumbnail previews, Studio CSV analytics, ideas and optional AI advice through a local bridge. Local developer build; live Google OAuth and direct vidIQ integration are not implemented. [Installation and capabilities](EXTENSION.md) · [ქართული](EXTENSION.ka.md).

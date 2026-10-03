@@ -8,3 +8,5 @@ include docs/archive/LICENSE
 recursive-include src/podcut/youtube *.js *.json
 recursive-include tests *.mjs
 include docs/social/facebook-update.ka.txt
+recursive-include extensions *.json *.js *.css *.html *.png
+recursive-include tests *.cjs

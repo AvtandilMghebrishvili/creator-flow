@@ -29,6 +29,7 @@ jobs:
         with:
           node-version: '22'
       - run: node --test tests/selection.test.mjs
+      - run: node --test tests/extension.test.cjs
       - run: python -m pytest -q
       - run: python -m build
       - run: python scripts/check_release.py
