@@ -1,0 +1,98 @@
+/* Optional browser integration: real unpacked extension + synthetic YouTube page. */
+const {chromium}=require(process.env.CREATOR_FLOW_PLAYWRIGHT || 'playwright');
+const {spawn}=require('node:child_process');
+const fs=require('node:fs/promises');
+const path=require('node:path');
+const os=require('node:os');
+const assert=require('node:assert/strict');
+const readline=require('node:readline');
+const repo=path.resolve(__dirname,'..');
+const extension=path.join(repo,'extensions','creator-flow');
+const screenshot=process.env.CREATOR_FLOW_SCREENSHOT;
+const fixture=`<!doctype html><html><meta charset="utf-8"><title>Creator Flow synthetic browser test</title><style>body{background:#0f0f0f;color:white;font-family:Arial;margin:0}header{padding:24px;background:#171717;font-size:22px}main{max-width:860px;margin:30px 48px}.video{height:460px;background:linear-gradient(140deg,#143c43,#101728);border-radius:14px;display:grid;place-items:center;font-size:45px;color:#8ee8cb}.note{color:#a8b8c8;font-size:14px}a{color:#eee}</style><header>▶ YouTube <span class="note">· Synthetic fixture for extension testing</span></header><main><ytd-watch-flexy video-id="abcdefghijk"><div class="video">AI / CREATOR LAB</div><div id="title"><h1>AI ინსტრუმენტები პრაქტიკაში: რა მუშაობს?</h1></div><div id="owner"><ytd-video-owner-renderer><a href="/@SyntheticCreator"></a><ytd-channel-name><a href="/@SyntheticCreator">Synthetic Creator Lab</a></ytd-channel-name></ytd-video-owner-renderer></div><div id="info"><span class="view-count">12,345 views</span></div><div id="description"><div id="description-text">This fictional example compares AI workflows. No real account data is shown.</div></div></ytd-watch-flexy></main></html>`;
+const thumbnail=`<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720"><rect width="1280" height="720" fill="#123342"/><circle cx="970" cy="350" r="210" fill="#77dfbd"/><text x="70" y="290" fill="white" font-family="Arial" font-size="90">AI CREATOR LAB</text><text x="70" y="405" fill="#90dfce" font-family="Arial" font-size="45">SYNTHETIC TEST IMAGE</text></svg>`;
+
+(async()=>{
+ const temp=await fs.mkdtemp(path.join(os.tmpdir(),'creator-flow-browser-'));
+ const testExtension=path.join(temp,'extension');await fs.cp(extension,testExtension,{recursive:true});
+ // Pregrant loopback only in this isolated fixture. Native optional-host dialogs need a human in the production browser.
+ const testManifest=JSON.parse(await fs.readFile(path.join(testExtension,'manifest.json'),'utf8'));testManifest.host_permissions=['http://127.0.0.1/*'];await fs.writeFile(path.join(testExtension,'manifest.json'),JSON.stringify(testManifest));
+ const context=await chromium.launchPersistentContext(path.join(temp,'profile'),{channel:process.env.CREATOR_FLOW_BROWSER || 'msedge',headless:true,viewport:{width:1500,height:1100},ignoreDefaultArgs:['--disable-extensions'],args:[`--disable-extensions-except=${testExtension}`,`--load-extension=${testExtension}`]});
+ let child,config;const errors=[];
+ try {
+  const workers=context.serviceWorkers(); const worker=workers[0] || await context.waitForEvent('serviceworker');
+  const id=new URL(worker.url()).hostname;
+  await context.route('https://www.youtube.com/**',r=>r.fulfill({contentType:'text/html',body:fixture}));
+  await context.route('https://i.ytimg.com/**',r=>r.fulfill({contentType:'image/svg+xml',body:thumbnail}));
+  const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.accept());
+  await page.goto('https://www.youtube.com/watch?v=abcdefghijk');
+  const panel=page.locator('#creator-flow-extension');
+  await panel.locator('#launcher').click();
+  await panel.locator('#lang').click();
+  await panel.getByRole('button',{name:'Analytics',exact:true}).waitFor();
+  assert.ok((await panel.locator('#body').innerText()).includes('12,345'));
+  assert.ok((await panel.locator('#scope').innerText()).includes('Synthetic Creator Lab'));
+  await panel.getByRole('button',{name:'Packaging',exact:true}).click();
+  await panel.locator('.preview').first().waitFor();
+  assert.equal(await panel.locator('textarea').count(),1);
+  await panel.getByRole('textbox',{name:'Title draft',exact:true}).first().fill('Edited title');
+  assert.equal(await panel.getByRole('textbox',{name:'Title draft',exact:true}).first().inputValue(),'Edited title');
+  await panel.getByRole('button',{name:'Ideas',exact:true}).click();
+  assert.ok((await panel.locator('#body').innerText()).includes('Local idea templates'));
+  const settings=await context.newPage();await settings.goto(`chrome-extension://${id}/settings.html`);
+  await settings.locator('#channel').fill('https://www.youtube.com/@SyntheticCreator');
+  await settings.locator('#start').fill('2026-09-01');await settings.locator('#end').fill('2026-09-30');
+  const csv='Content,Video title,Views,Impressions,Impressions click-through rate (%),Watch time (hours),Average view duration,Subscribers\nabcdefghijk,AI creator demo,1200,15000,4.2,30,0:01:30,12\nlmnopqrstuv,Practical tools,600,5000,6.0,12,0:01:12,5';
+  await settings.locator('#csv').setInputFiles({name:'fictional.csv',mimeType:'text/csv',buffer:Buffer.from(csv)});
+  await settings.locator('#import').click();
+  await settings.locator('#status').filter({hasText:'Imported 2 video rows'}).waitFor();
+  await panel.locator('#refresh').click();await panel.getByRole('button',{name:'Analytics',exact:true}).click();
+  assert.ok((await panel.locator('#body').innerText()).includes('4.65%'));
+  assert.ok((await panel.locator('#body').innerText()).includes('2026-09-01'));
+  const python=process.env.CREATOR_FLOW_PYTHON || path.join(repo,'.venv',process.platform==='win32'?'Scripts/python.exe':'bin/python');
+  child=spawn(python,['-X','utf8',path.join(repo,'tests','extension_bridge_fixture.py'),path.join(temp,'bridge'),id],{cwd:repo,windowsHide:true,stdio:['ignore','pipe','pipe']});
+  config=await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('Test bridge startup timeout')),15000);const lines=readline.createInterface({input:child.stdout});lines.once('line',line=>{clearTimeout(timer);try{resolve(JSON.parse(line))}catch(e){reject(e)}});child.once('error',reject);child.stderr.on('data',b=>process.stderr.write(b));});
+  await settings.locator('#url').fill(config.url);await settings.locator('#token').fill(config.token);
+  await settings.locator('#connect').click();
+  await settings.locator('#status').filter({hasText:'Connected · ollama'}).waitFor({timeout:15000});
+  await panel.locator('#refresh').click();await panel.getByRole('button',{name:'Connect',exact:true}).click();
+  await panel.getByRole('button',{name:'Load Studio projects',exact:true}).click();
+  await panel.getByLabel('Studio project',{exact:true}).locator('option').filter({hasText:'Synthetic YouTube project'}).waitFor({state:'attached'});
+  const studioPopup=context.waitForEvent('page');
+  await panel.getByRole('button',{name:'Attach context to project',exact:true}).click();
+  const studioPage=await studioPopup;await studioPage.waitForLoadState();
+  await studioPage.getByRole('heading',{name:'YouTube context',exact:true}).waitFor();
+  assert.ok((await studioPage.locator('#content').innerText()).includes('AI ინსტრუმენტები პრაქტიკაში'));
+  const studioState=await (await fetch(config.url+'/v1/studio',{headers:{Authorization:'Bearer '+config.token}})).json();
+  assert.equal(studioState.jobs.length,0);
+  assert.equal(Object.values(studioState.projects)[0].pageContext.includeThumbnail,false);
+  await studioPage.close();
+  await panel.getByRole('button',{name:'Send context and get AI advice',exact:true}).click();
+  await panel.locator('#status').filter({hasText:'AI report ready'}).waitFor({timeout:20000});
+  await panel.getByRole('button',{name:'Overview',exact:true}).click();
+  assert.ok((await panel.locator('#body').innerText()).includes('Synthetic test report'));
+  assert.equal(await panel.locator('img[src="x"]').count(),0);
+  assert.ok((await panel.locator('#body').innerText()).includes('<img src=x onerror=alert(1)>'));
+  await panel.getByRole('button',{name:'Packaging',exact:true}).click();
+  assert.equal(await panel.locator('textarea').inputValue(),'A test description.');
+  if(screenshot)await page.screenshot({path:screenshot,fullPage:true});
+  await page.evaluate(()=>{document.dispatchEvent(new Event('yt-navigate-start'));history.pushState({},'', '/watch?v=lmnopqrstuv');document.querySelector('ytd-watch-flexy').setAttribute('video-id','lmnopqrstuv');document.querySelector('h1').textContent='Different video';document.dispatchEvent(new Event('yt-navigate-finish'));});
+  await panel.locator('#scope').filter({hasText:'Synthetic Creator Lab'}).waitFor();
+  await panel.getByRole('button',{name:'Overview',exact:true}).click();
+  assert.ok(!(await panel.locator('#body').innerText()).includes('Synthetic test report'));
+  await page.evaluate(()=>{document.dispatchEvent(new Event('yt-navigate-start'));history.pushState({},'', '/@SyntheticCreator/videos');document.querySelector('main').innerHTML='<yt-page-header-renderer><h1>Synthetic Creator Lab</h1></yt-page-header-renderer><ytd-rich-item-renderer><a id="video-title-link" href="/watch?v=abcdefghijk"><h3>Modern YouTube card</h3></a><span class="ytContentMetadataViewModelMetadataText" aria-label="4.8 thousand views">4.8K</span></ytd-rich-item-renderer>';document.dispatchEvent(new Event('yt-navigate-finish'));});
+  await panel.getByRole('button',{name:'Analytics',exact:true}).click();
+  await panel.locator('#body').filter({hasText:'4,800'}).waitFor();
+  await panel.locator('#lang').click();await panel.getByRole('button',{name:'ანალიტიკა',exact:true}).waitFor();
+  await panel.locator('#close').click();assert.ok(await panel.locator('#launcher').isVisible());
+  assert.deepEqual(errors,[]);
+  console.log(JSON.stringify({passed:true,realExtension:true,browser:'Edge',checks:['YouTube injection','packaging UI','CSV weighted CTR','real loopback pairing','Studio project context transfer without AI','async AI with test provider','escaped report text','SPA stale-report rejection','avatar-first owner extraction','modern channel card views','KA/EN','collapse'],provider:'synthetic only; no paid requests',permissionTest:'Loopback pregranted in fixture manifest; production permission dialog requires user action.'}));
+ } catch(error) {
+  for(const page of context.pages()) console.error('PAGE STATUS',page.url(),await page.locator('#status').allTextContents().catch(()=>[]));
+  throw error;
+ } finally {
+  if(config)await fetch(config.url+'/test-stop',{method:'POST',headers:{Authorization:'Bearer '+config.token}}).catch(()=>{});
+  if(child)child.kill();
+  await context.close();
+ }
+})().catch(e=>{console.error(e);process.exitCode=1});

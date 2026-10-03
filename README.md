@@ -10,6 +10,8 @@ Codex-სა და Claude Code-სთვის შექმნილი ად�
 
 [English](docs/README.en.md) · [აგენტისთვის / Start here](START_HERE.md) · [დაყენება](docs/SETUP.md) · [Shorts / Reels](docs/CLIPS.md) · [თაბნეილები](docs/THUMBNAILS.md) · [YouTube არქივი](docs/ARCHIVE.md) · [Premiere](docs/PREMIERE.md)
 
+**[Studio: გამოწერები, საერთო მეხსიერება და მართვის პანელი](docs/STUDIO.ka.md)** · [Chrome / Edge გაფართოება](docs/EXTENSION.ka.md)
+
 ## პირველად აქედან დაიწყე
 
 | ქართული | English |
@@ -141,3 +143,11 @@ cd creator-flow
 ძველი `podcut` ბრძანებები, Python პაკეტის სახელი და `.podcut/` სამუშაო მდგომარეობა თავსებადობისთვის შენარჩუნებულია. მიმდინარე კოდს განვაახლებთ მხოლოდ აქ. YouTube-ზე ატვირთვა ცალკე მოთხოვნას საჭიროებს.
 
 ეს არის აგენტის მიერ მართული ინსტრუმენტები; მოსაუბრეების, სინქრონის, ტექსტისა და მონტაჟის გადამოწმება საჭიროა. [შესაძლებლობები და შეზღუდვები](docs/LIMITATIONS.md) · [მონაწილეობა](CONTRIBUTING.md) · [MIT](LICENSE) · [ავტორობა](THIRD_PARTY_NOTICES.md).
+
+## YouTube-ის გაფართოება Chrome / Edge-ისთვის
+
+YouTube-ის გვერდზევე: სათაურებისა და აღწერის შემოწმება, თაბნეილის პრევიუ, Studio CSV ანალიტიკა, იდეები და არჩევითი AI კავშირი. ადგილობრივი developer ვერსია; Google OAuth და ჩაშენებული vidIQ კავშირი ჯერ არ აქვს. [დაყენება ქართულად](docs/EXTENSION.ka.md) · [English / technical guide](docs/EXTENSION.md).
+
+## Studio: გამოწერები და საერთო მეხსიერება
+
+გაფართოებიდან გახსენი ახალი მართვის პანელი: ChatGPT-ის ოფიციალური გამოწერის კავშირი, Gemini/Claude-ის ოფიციალური CLI, კონექტორების როლები, პროექტის საერთო მეხსიერება და ადგილობრივი რილსების რედაქტორი/რენდერი. სურათები ამ ვერსიაში ოფიციალურ ჩათში გადატანით იქმნება. [ქართული ინსტრუქცია](docs/STUDIO.ka.md) · [English](docs/STUDIO.md).

@@ -12,6 +12,11 @@ def parser():
     ap.add_argument('--version',action='version',version=__version__)
     sub=ap.add_subparsers(dest='command',required=True)
     sub.add_parser('doctor')
+    q=sub.add_parser('studio-serve',help='Shared-memory Studio with subscription connectors and local editing.')
+    q.add_argument('--workspace',required=True);q.add_argument('--extension-id',action='append',default=[],dest='extension_ids');q.add_argument('--port',type=int,default=8772)
+    q=sub.add_parser('extension-serve',help='Optional loopback bridge for the YouTube browser extension.')
+    q.add_argument('--workspace',required=True);q.add_argument('--extension-id',action='append',required=True,dest='extension_ids')
+    q.add_argument('--port',type=int,default=8772);q.add_argument('--provider',choices=['none','openai','ollama'],default='none');q.add_argument('--model')
     from .archive import COMMANDS
     q=sub.add_parser('archive',help='Bundled YouTube archive tools (optional Node/yt-dlp).')
     q.add_argument('tool',choices=COMMANDS)
@@ -45,6 +50,12 @@ def parser():
     return ap
 
 def execute(a):
+    if a.command=='studio-serve':
+        from .extension import serve
+        return serve(a.workspace,a.extension_ids,a.port,studio_enabled=True)
+    if a.command=='extension-serve':
+        from .extension import serve
+        return serve(a.workspace,a.extension_ids,a.port,a.provider,a.model)
     if a.command=='archive':
         from .archive import run
         raise SystemExit(run(a.tool,a.args))

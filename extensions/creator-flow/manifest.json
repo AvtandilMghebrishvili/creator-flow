@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "Creator Flow for YouTube",
+  "version": "0.2.0",
+  "description": "YouTube research, packaging checks, Studio CSV analytics and connected AI advice. Georgian and English.",
+  "permissions": ["storage", "activeTab"],
+  "optional_host_permissions": ["http://127.0.0.1/*"],
+  "background": {"service_worker": "background.js"},
+  "action": {"default_title": "Open Creator Flow", "default_icon": {"32": "icons/32.png"}},
+  "icons": {"16": "icons/16.png", "32": "icons/32.png", "128": "icons/128.png"},
+  "options_page": "settings.html",
+  "content_scripts": [{
+    "matches": ["https://www.youtube.com/*", "https://youtube.com/*"],
+    "js": ["core.js", "extract.js", "panel.js"],
+    "run_at": "document_idle"
+  }],
+  "content_security_policy": {"extension_pages": "script-src 'self'; object-src 'none'"}
+}
