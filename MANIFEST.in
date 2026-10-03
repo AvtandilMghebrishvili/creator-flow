@@ -10,3 +10,6 @@ recursive-include tests *.mjs
 include docs/social/facebook-update.ka.txt
 recursive-include extensions *.json *.js *.css *.html *.png
 recursive-include tests *.cjs
+
+recursive-include src/podcut/studio_ui *.html *.js *.css
+include Install-Studio.ps1 Start-Studio.ps1

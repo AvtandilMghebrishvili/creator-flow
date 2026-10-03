@@ -12,7 +12,7 @@ A Chrome/Edge Manifest V3 extension that adds a collapsible Creator Flow panel *
 | Packaging | Actual thumbnail at large/feed size; editable title/description/tag drafts; copy controls | Local drafts are templates. No metadata is published |
 | Analytics | Separate Shorts/video summaries for up to 200 loaded cards; date-scoped Studio CSV import; weighted CTR, watch hours, views, subscribers and video rows | Visible cards are a sample, not a full crawl; Studio data is imported, not live OAuth analytics |
 | Ideas | Topic-derived local idea templates or model-generated channel-specific ideas with rationale and evidence | No automatic trend search, keyword-volume service or guaranteed performance |
-| Connect | Optional loopback bridge to OpenAI API or an installed Ollama model; async jobs; optional thumbnail vision; JSON handoff to/from Codex/Claude | Explicit Send action. Requires your own configured model; chat subscriptions/MCP connections are not inherited |
+| Connect | Studio subscription connectors, project context transfer and shared memory; optional advanced API/Ollama route | Sign in explicitly through supported official routes; no private chat-history sharing or automatic generation |
 
 The extension supports Georgian and English. It does not control playback, publish changes, read cookies, collect browsing history or request all-site access. Only `youtube.com` and `www.youtube.com` receive the content script. YouTube Studio itself is not scraped.
 
@@ -39,7 +39,13 @@ abcdefghijk,Example video,1200,15000,4.2,30,0:01:30,12
 
 The displayed CTR is weighted by impressions only across rows where both values are known. Each metric shows coverage. Average view duration is not a retention curve. No causal claim is made from raw lifetime Shorts versus long-video counts. Missing metrics are **unknown**, never zero.
 
-## Connect AI locally
+## Connect your subscriptions through Studio
+
+Follow [Studio setup](STUDIO.md) to install the official connector tools and run the local panel. On Windows, start `Start-Studio.ps1 -ExtensionId YOUR_EXTENSION_ID` to allow this extension. Use the private `connection.json` URL/token in Settings to pair. In YouTube’s Connect tab, load Studio projects, select one and attach the context. Studio opens its memory page; choose a role and start a task there. Text and imported metrics transfer locally; no thumbnail pixels or provider request are included in attachment.
+
+ChatGPT uses official plan-usage sign-in. Gemini and Claude use their unmodified vendor CLIs and user sign-in. Image creation uses an explicit chat handoff. [Capabilities and limitations](STUDIO.md).
+
+## Advanced optional API / Ollama connection
 
 Install Creator Flow normally, then find the **Extension ID** on the extension's Settings page. Run the bridge in a terminal using a private workspace **outside Git repositories**:
 
@@ -110,3 +116,7 @@ The ZIP contains only extension assets, README and license, never bridge tokens 
 - [Ollama chat API](https://docs.ollama.com/api/chat)
 - [YouTube Advanced mode exports](https://support.google.com/youtube/answer/9717005)
 - [YouTube tags guidance](https://support.google.com/youtube/answer/146402)
+
+## Studio 0.2: subscription connectors
+
+Use the **CF** button to open the local control panel for subscription-backed tasks, shared memory, role routing and local editing. [Studio setup and capabilities](STUDIO.md). The API/Ollama bridge described above remains an optional advanced path; Studio subscription tasks never fall back to it.

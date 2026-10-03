@@ -19,6 +19,8 @@ def package(output):
         for name in ASSETS:
             archive.write(folder / name, name)
         archive.write(ROOT / 'LICENSE', 'LICENSE')
+        archive.write(ROOT / 'docs' / 'STUDIO.md', 'STUDIO.md')
+        archive.write(ROOT / 'docs' / 'STUDIO.ka.md', 'STUDIO.ka.md')
         archive.write(ROOT / 'docs' / 'EXTENSION.ka.md', 'README.ka.md')
         archive.write(ROOT / 'docs' / 'EXTENSION.md', 'README.en.md')
         archive.write(ROOT / 'docs' / 'EXTENSION.md', 'EXTENSION.md')

@@ -28,6 +28,22 @@ async function handle(message, sender) {
     case 'LANGUAGE':
       if (!['ka', 'en'].includes(message.language)) throw Error('Unsupported language.');
       await chrome.storage.local.set({language: message.language}); return {};
+    case 'STUDIO_OPEN': {
+      const saved = state.connection;
+      const url = saved ? connection(saved).url : 'http://127.0.0.1:8772';
+      await chrome.tabs.create({url: url + '/studio/'}); return {};
+    }
+    case 'STUDIO_PROJECTS': {
+      const studio = await bridge('/v1/studio');
+      return Object.values(studio.projects).map(p => ({id: p.id, name: p.name, revision: p.revision}));
+    }
+    case 'STUDIO_ATTACH': {
+      if (!/^[a-f0-9]{32}$/.test(message.project) || !Number.isInteger(message.revision)) throw Error('Choose a Studio project first.');
+      if (!message.context || JSON.stringify(message.context).length > 220000) throw Error('Context is missing or too large.');
+      await bridge('/v1/studio', {action: 'page_context', project: message.project, revision: message.revision, context: {...message.context, contextKey: message.key, includeThumbnail: false}});
+      await chrome.tabs.create({url: connection(state.connection).url + '/studio/#project=' + message.project});
+      return {};
+    }
     case 'SETTINGS': await chrome.runtime.openOptionsPage(); return {};
     case 'CONNECT':
       if (!ownPage(sender)) throw Error('Use the extension Settings page.');

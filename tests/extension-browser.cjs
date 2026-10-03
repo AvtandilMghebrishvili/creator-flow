@@ -56,6 +56,17 @@ const thumbnail=`<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="72
   await settings.locator('#connect').click();
   await settings.locator('#status').filter({hasText:'Connected · ollama'}).waitFor({timeout:15000});
   await panel.locator('#refresh').click();await panel.getByRole('button',{name:'Connect',exact:true}).click();
+  await panel.getByRole('button',{name:'Load Studio projects',exact:true}).click();
+  await panel.getByLabel('Studio project',{exact:true}).locator('option').filter({hasText:'Synthetic YouTube project'}).waitFor({state:'attached'});
+  const studioPopup=context.waitForEvent('page');
+  await panel.getByRole('button',{name:'Attach context to project',exact:true}).click();
+  const studioPage=await studioPopup;await studioPage.waitForLoadState();
+  await studioPage.getByRole('heading',{name:'YouTube context',exact:true}).waitFor();
+  assert.ok((await studioPage.locator('#content').innerText()).includes('AI ინსტრუმენტები პრაქტიკაში'));
+  const studioState=await (await fetch(config.url+'/v1/studio',{headers:{Authorization:'Bearer '+config.token}})).json();
+  assert.equal(studioState.jobs.length,0);
+  assert.equal(Object.values(studioState.projects)[0].pageContext.includeThumbnail,false);
+  await studioPage.close();
   await panel.getByRole('button',{name:'Send context and get AI advice',exact:true}).click();
   await panel.locator('#status').filter({hasText:'AI report ready'}).waitFor({timeout:20000});
   await panel.getByRole('button',{name:'Overview',exact:true}).click();
@@ -75,7 +86,7 @@ const thumbnail=`<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="72
   await panel.locator('#lang').click();await panel.getByRole('button',{name:'ანალიტიკა',exact:true}).waitFor();
   await panel.locator('#close').click();assert.ok(await panel.locator('#launcher').isVisible());
   assert.deepEqual(errors,[]);
-  console.log(JSON.stringify({passed:true,realExtension:true,browser:'Edge',checks:['YouTube injection','packaging UI','CSV weighted CTR','real loopback pairing','async AI with test provider','escaped report text','SPA stale-report rejection','avatar-first owner extraction','modern channel card views','KA/EN','collapse'],provider:'synthetic only; no paid requests',permissionTest:'Loopback pregranted in fixture manifest; production permission dialog requires user action.'}));
+  console.log(JSON.stringify({passed:true,realExtension:true,browser:'Edge',checks:['YouTube injection','packaging UI','CSV weighted CTR','real loopback pairing','Studio project context transfer without AI','async AI with test provider','escaped report text','SPA stale-report rejection','avatar-first owner extraction','modern channel card views','KA/EN','collapse'],provider:'synthetic only; no paid requests',permissionTest:'Loopback pregranted in fixture manifest; production permission dialog requires user action.'}));
  } catch(error) {
   for(const page of context.pages()) console.error('PAGE STATUS',page.url(),await page.locator('#status').allTextContents().catch(()=>[]));
   throw error;

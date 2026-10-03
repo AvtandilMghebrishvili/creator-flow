@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Creator Flow for YouTube",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "YouTube research, packaging checks, Studio CSV analytics and connected AI advice. Georgian and English.",
   "permissions": ["storage", "activeTab"],
   "optional_host_permissions": ["http://127.0.0.1/*"],

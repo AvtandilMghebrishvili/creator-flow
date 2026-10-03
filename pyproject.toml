@@ -14,6 +14,7 @@ authors = [{name = "TECHcrush / Avtandil Mghebrishvili"}]
 dependencies = ["numpy>=1.24,<3", "scipy>=1.10,<2", "soundfile>=0.12,<1", "Pillow>=10,<13", "fonttools>=4.50,<5"]
 
 [project.optional-dependencies]
+connectors = ["PyJWT[crypto]>=2.10,<3"]
 archive = ["yt-dlp[default]>=2025.1"]
 transcribe = ["sherpa-onnx>=1.13.8,<2", "huggingface-hub>=0.24,<2"]
 whisper = ["faster-whisper>=1.1,<2"]
@@ -24,7 +25,7 @@ creator-flow = "podcut.cli:main"
 podcut = "podcut.cli:main"
 
 [tool.setuptools.package-data]
-podcut = ["youtube/*.js", "youtube/*.json", "youtube/lib/*.js"]
+podcut = ["studio_ui/*.html", "studio_ui/*.css", "studio_ui/*.js", "youtube/*.js", "youtube/*.json", "youtube/lib/*.js"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

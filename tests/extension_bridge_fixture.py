@@ -15,7 +15,8 @@ def fake_advice(context, provider, model):
 
 if __name__ == '__main__':
     ex.generate = fake_advice
-    bridge = ex.Bridge(sys.argv[1], [sys.argv[2]], 'ollama', 'synthetic-browser-test')
+    bridge = ex.Bridge(sys.argv[1], [sys.argv[2]], 'ollama', 'synthetic-browser-test', studio_enabled=True)
+    bridge.studio.dispatch({'action': 'create_project', 'name': 'Synthetic YouTube project'}, '')
     base = ex.handler(bridge)
     class Handler(base):
         def do_POST(self):

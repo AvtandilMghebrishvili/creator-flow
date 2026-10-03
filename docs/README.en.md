@@ -4,6 +4,8 @@
 
 **One local workflow for podcasts, Shorts/Reels and YouTube archives, guided by Codex or Claude Code.** Podcut Flow and YOUTUBETECHCRUSH are consolidated in this repository, with both Git histories preserved. There is one installer, one agent entry point and no second checkout to manage.
 
+**[Studio: subscription connectors, shared memory and local editing](STUDIO.md)** · [Chrome / Edge extension](EXTENSION.md)
+
 ## Full walkthrough and visual cards
 
 **[Complete English guide](USER_GUIDE.en.md)** · **[ქართული გზამკვლევი](USER_GUIDE.ka.md)**
@@ -104,3 +106,7 @@ This is an agent-guided toolkit, with human review of text, sync, fonts and edit
 ## Creator Flow for YouTube: Chrome / Edge extension
 
 An in-page panel for packaging checks, thumbnail previews, Studio CSV analytics, ideas and optional AI advice through a local bridge. Local developer build; live Google OAuth and direct vidIQ integration are not implemented. [Installation and capabilities](EXTENSION.md) · [ქართული](EXTENSION.ka.md).
+
+## Shared-memory Studio and subscription connectors
+
+[Studio](STUDIO.md) adds official ChatGPT plan sign-in, user-owned Gemini/Claude CLI integration, role routing, project memory and reviewed local video jobs. Image output uses an explicit chat handoff. [ქართული](STUDIO.ka.md).

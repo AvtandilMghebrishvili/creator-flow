@@ -186,10 +186,10 @@ def generate(context, provider, model):
 
 
 class Bridge:
-    def __init__(self, workspace, extension_ids, provider='none', model=None):
+    def __init__(self, workspace, extension_ids, provider='none', model=None, studio_enabled=False):
         self.root = Path(workspace).expanduser().resolve()
         self.origins = {'chrome-extension://' + item for item in extension_ids}
-        if not extension_ids or any(not re.fullmatch('[a-p]{32}', item) for item in extension_ids):
+        if (not extension_ids and not studio_enabled) or any(not re.fullmatch('[a-p]{32}', item) for item in extension_ids):
             raise ValueError('Use the 32-character ID shown on the extension Settings page.')
         if provider not in ('none', 'openai', 'ollama') or (provider != 'none' and not model):
             raise ValueError('Choose a supported provider and an explicit model name.')
@@ -200,6 +200,10 @@ class Bridge:
         self.provider, self.model = provider, model
         self.token = secrets.token_urlsafe(36)
         self.jobs, self.lock = {}, threading.Lock()
+        self.studio = None
+        if studio_enabled:
+            from .studio import Studio
+            self.studio = Studio(self.root)
         for path in (self.root / 'jobs').glob('*.json'):
             try:
                 job = json.loads(path.read_text(encoding='utf-8'))
@@ -213,7 +217,7 @@ class Bridge:
 
     def health(self):
         key_ready = bool(os.environ.get('CREATOR_FLOW_OPENAI_API_KEY') or os.environ.get('OPENAI_API_KEY'))
-        return {'service': 'creator-flow-extension', 'version': '0.1.0', 'provider': self.provider,
+        return {'service': 'creator-flow-extension', 'version': '0.2.0', 'studioReady': self.studio is not None, 'provider': self.provider,
                 'model': self.model, 'aiReady': bool(self.model and (self.provider == 'ollama' or self.provider == 'openai' and key_ready)),
                 'note': 'Configuration readiness only; provider access is verified by an explicit request.'}
 
@@ -269,7 +273,7 @@ def handler(bridge):
         def origin_allowed(self):
             origin = self.headers.get('Origin')
             # Extension background GET may omit Origin; the bearer token is still required.
-            return origin is None or origin in bridge.origins
+            return origin is None or origin in bridge.origins or (bridge.studio is not None and origin == f'http://127.0.0.1:{self.server.server_port}')
 
         def allowed(self, auth=True):
             if self.headers.get('Host') != f'127.0.0.1:{self.server.server_port}' or not self.origin_allowed():
@@ -306,6 +310,9 @@ def handler(bridge):
             self.end_headers()
 
         def do_GET(self):
+            from .studio_http import route
+            if route(self, bridge):
+                return
             if not self.allowed():
                 return
             if self.path == '/v1/health':
@@ -317,6 +324,9 @@ def handler(bridge):
             return self.reply(404, {'error': 'Not found.'})
 
         def do_POST(self):
+            from .studio_http import route
+            if route(self, bridge):
+                return
             if not self.allowed():
                 return
             if self.path != '/v1/jobs':
@@ -334,17 +344,25 @@ def handler(bridge):
     return Handler
 
 
-def serve(workspace, extension_ids, port=8772, provider='none', model=None):
+def serve(workspace, extension_ids, port=8772, provider='none', model=None, studio_enabled=True):
     if not 1024 <= port <= 65535:
         raise ValueError('Port must be between 1024 and 65535.')
-    bridge = Bridge(workspace, extension_ids, provider, model)
-    server = ThreadingHTTPServer(('127.0.0.1', port), handler(bridge))
-    config = {'url': f'http://127.0.0.1:{port}', 'token': bridge.token, 'extensionIds': extension_ids, 'provider': provider, 'model': model}
-    write_json(bridge.root / 'connection.json', config)
-    print(f'Creator Flow bridge: http://127.0.0.1:{port}\nPairing details: {bridge.root / "connection.json"}\nProvider: {provider}; no automatic AI requests. Press Ctrl+C to stop.', flush=True)
-    try:
-        server.serve_forever()
-    except KeyboardInterrupt:
-        pass
-    finally:
-        server.server_close()
+    root = Path(workspace).expanduser().resolve()
+    if any((parent / '.git').exists() for parent in [root, *root.parents]):
+        raise ValueError('Choose a private workspace outside Git repositories.')
+    root.mkdir(parents=True, exist_ok=True)
+    from .core import worker
+    with worker(root):
+        bridge = Bridge(workspace, extension_ids, provider, model, studio_enabled=studio_enabled)
+        server = ThreadingHTTPServer(('127.0.0.1', port), handler(bridge))
+        config = {'url': f'http://127.0.0.1:{port}', 'token': bridge.token, 'extensionIds': extension_ids, 'provider': provider, 'model': model}
+        write_json(bridge.root / 'connection.json', config)
+        print(f'Creator Flow bridge: http://127.0.0.1:{port}\nPairing details: {bridge.root / "connection.json"}\nProvider: {provider}; no automatic AI requests. Press Ctrl+C to stop.', flush=True)
+        if studio_enabled:
+            print(f'Creator Flow Studio: http://127.0.0.1:{port}/studio/', flush=True)
+        try:
+            server.serve_forever()
+        except KeyboardInterrupt:
+            pass
+        finally:
+            server.server_close()
